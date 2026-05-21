@@ -1,4 +1,4 @@
-namespace finacc.Shared.Kernel;
+namespace FinaccApi.Shared.Kernel;
 
 /// <summary>
 /// Результат операции с возвращаемым значением типа TValue.
