@@ -1,12 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>fae0b545-3f79-4e9f-84ea-46d4d3d9755e</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EFCore.NamingConventions" Version="9.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0">
