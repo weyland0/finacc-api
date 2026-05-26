@@ -37,4 +37,20 @@ public class User : Entity
     /// (Active / Inactive)
     /// </summary>
     public string Status { get; set; } = null!;
+
+
+    public User(
+        string email,
+        string phone,
+        string passwordHash,
+        string firstName,
+        string lastName)
+    {
+        Email = email;
+        Phone = phone;
+        PasswordHash = passwordHash;
+        FirstName = firstName;
+        LastName = lastName;
+        Status = UserStatus.Active;
+    }
 }
