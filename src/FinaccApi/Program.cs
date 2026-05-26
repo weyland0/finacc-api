@@ -10,18 +10,28 @@ using FinaccApi.Modules.Access;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// Регистрирует встроенный генератор OpenAPI-документа.
+// В development-режиме ниже он будет доступен по адресу /openapi/v1.json.
 builder.Services.AddOpenApi();
+
+// Регистрирует метаданные об API endpoints.
+// Swagger использует эти данные, чтобы понять, какие маршруты, параметры и DTO есть в приложении.
 builder.Services.AddEndpointsApiExplorer();
+
+// Регистрирует генератор Swagger-документа от Swashbuckle.
+// Этот документ затем отображается в Swagger UI.
 builder.Services.AddSwaggerGen(options =>
 {
+    // Описание версии API, которое будет показано в Swagger UI.
+    // Имя "v1" также используется в URL: /swagger/v1/swagger.json.
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Finacc API",
         Version = "v1"
     });
 
+    // Описывает JWT Bearer-авторизацию для Swagger.
+    // Благодаря этому в Swagger UI появляется кнопка Authorize.
     options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -32,6 +42,8 @@ builder.Services.AddSwaggerGen(options =>
         BearerFormat = "JWT"
     });
 
+    // Говорит Swagger-документу использовать описанную выше Bearer-схему.
+    // После авторизации Swagger UI будет добавлять JWT в заголовок Authorization.
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -48,68 +60,101 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Конфигурация DbContext
+// Регистрирует EF Core DbContext для работы с PostgreSQL.
+// UseSnakeCaseNamingConvention приводит имена таблиц и колонок к snake_case.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
         .UseSnakeCaseNamingConvention());
 
-// Конфигурация JWT аутентификации
+// Привязывает секцию Jwt из appsettings*.json к классу JwtOptions.
+// После этого JwtOptions можно получать через IOptions<JwtOptions>.
 builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection(JwtOptions.SectionName));
 
+// Читает JWT-настройки при старте приложения.
+// Если секция Jwt не настроена, приложение падает сразу, а не во время первого запроса.
 var jwtOptions = builder.Configuration
     .GetSection(JwtOptions.SectionName)
     .Get<JwtOptions>()
     ?? throw new InvalidOperationException("JWT options are not configured.");
 
+// Создает ключ, которым приложение будет проверять подпись входящих JWT-токенов.
 var signingKey = new SymmetricSecurityKey(
     Encoding.UTF8.GetBytes(jwtOptions.Secret));
 
+// Регистрирует JWT Bearer-аутентификацию.
+// Аутентификация отвечает на вопрос: "Кто сделал запрос?"
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        // Правила проверки JWT-токена из заголовка Authorization: Bearer <token>.
         options.TokenValidationParameters = new TokenValidationParameters
         {
+            // Проверяем, что токен выпущен ожидаемым issuer.
             ValidateIssuer = true,
             ValidIssuer = jwtOptions.Issuer,
 
+            // Проверяем, что токен предназначен для ожидаемой audience.
             ValidateAudience = true,
             ValidAudience = jwtOptions.Audience,
 
+            // Проверяем цифровую подпись токена.
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = signingKey,
 
+            // Проверяем срок действия токена.
             ValidateLifetime = true,
 
+            // Небольшой допуск на расхождение времени между сервером и клиентом.
             ClockSkew = TimeSpan.FromMinutes(1)
         };
     });
 
+// Регистрирует сервисы авторизации.
+// Авторизация отвечает на вопрос: "Имеет ли пользователь право выполнить это действие?"
 builder.Services.AddAuthorization();
+
+// Регистрирует MVC/Web API контроллеры, помеченные атрибутами вроде [ApiController].
 builder.Services.AddControllers();
+
+// Позволяет сервисам получать доступ к текущему HTTP-запросу через IHttpContextAccessor.
 builder.Services.AddHttpContextAccessor();
+
+// Регистрирует зависимости модуля Access: handlers, сервисы и другую инфраструктуру модуля.
 builder.Services.AddAccessModule(builder.Configuration);
 
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Включает OpenAPI/Swagger только в development-режиме,
+// чтобы служебная документация API не публиковалась наружу без явного решения.
 if (app.Environment.IsDevelopment())
-{
+{   
+    // Публикует встроенный OpenAPI-документ по адресу /openapi/v1.json.
     app.MapOpenApi();
+
+    // Публикует Swagger JSON по адресу /swagger/v1/swagger.json.
     app.UseSwagger();
+
+    // Публикует интерактивную страницу Swagger UI по адресу /swagger.
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "Finacc API v1");
     });
 }
 
+// Перенаправляет HTTP-запросы на HTTPS.
 app.UseHttpsRedirection();
 
+// Сначала аутентификация: приложение определяет пользователя по JWT-токену.
 app.UseAuthentication();
+
+// Затем авторизация: приложение проверяет права пользователя на конкретный endpoint.
 app.UseAuthorization();
 
+// Подключает маршруты контроллеров к HTTP pipeline.
 app.MapControllers();
 
+// Запускает веб-приложение и начинает принимать HTTP-запросы.
 app.Run();
