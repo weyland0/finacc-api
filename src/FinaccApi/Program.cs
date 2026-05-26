@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using FinaccApi.DataAccess;
 using FinaccApi.Shared.Infrastructure;
+using FinaccApi.Modules.Access;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,6 +87,9 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddAccessModule(builder.Configuration);
 
 
 var app = builder.Build();
