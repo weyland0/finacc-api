@@ -1,4 +1,4 @@
-namespace FinaccApi.Shared.Infrastructure;
+namespace FinaccApi.Shared.Infrastructure.Jwt;
 
 /// <summary>
 /// Настройки для JWT, загружаемые из конфигурации приложения.
