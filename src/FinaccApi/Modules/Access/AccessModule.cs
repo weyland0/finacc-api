@@ -1,6 +1,6 @@
-using FinaccApi.Shared.Infrastructure;
-using FinaccApi.Modules.Access.Application.Auth.Register;
 using FinaccApi.Modules.Access.Infrastructure;
+using FinaccApi.Modules.Access.Application.Auth.Register;
+using FinaccApi.Modules.Access.Application.Auth.Login;
 
 namespace FinaccApi.Modules.Access;
 
@@ -14,6 +14,7 @@ public static class AccessModule
         services.AddScoped<IJwtTokenService, JwtTokenService>();
 
         services.AddScoped<RegisterHandler>();
+        services.AddScoped<LoginHandler>();
 
         return services;
     }
