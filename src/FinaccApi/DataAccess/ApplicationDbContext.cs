@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using FinaccApi.Modules.Access.Domain;
+using FinaccApi.Modules.Organizations.Domain;
 
 namespace FinaccApi.DataAccess;
 
@@ -9,6 +10,7 @@ namespace FinaccApi.DataAccess;
 public sealed class ApplicationDbContext : DbContext
 {
     public DbSet<User> Users => Set<User>();
+    public DbSet<Organization> Organizations => Set<Organization>();
 
     /// <summary>
     /// Конструктор контекста базы данных.
