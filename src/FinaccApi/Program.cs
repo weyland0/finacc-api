@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using FinaccApi.DataAccess;
-using FinaccApi.Shared.Infrastructure;
+using FinaccApi.Shared.Infrastructure.Jwt;
 using FinaccApi.Modules.Access;
 
 var builder = WebApplication.CreateBuilder(args);
