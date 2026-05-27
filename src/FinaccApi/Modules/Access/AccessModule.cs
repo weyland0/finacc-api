@@ -10,9 +10,6 @@ public static class AccessModule
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.Configure<JwtOptions>(
-            configuration.GetSection(JwtOptions.SectionName));
-
         services.AddScoped<IPasswordHasher, PasswordHasherSha256>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
 
