@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using FinaccApi.DataAccess;
 using FinaccApi.Shared.Infrastructure.Jwt;
 using FinaccApi.Modules.Access;
+using FinaccApi.Shared.Application.Auth;
+using FinaccApi.Shared.Infrastructure.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -120,6 +122,10 @@ builder.Services.AddControllers();
 
 // Позволяет сервисам получать доступ к текущему HTTP-запросу через IHttpContextAccessor.
 builder.Services.AddHttpContextAccessor();
+
+// Регистрирует ICurrentUser, который использует HttpContext
+// для получения информации о текущем пользователе.
+builder.Services.AddScoped<ICurrentUser, CurrentUserWithHttpContext>();
 
 // Регистрирует зависимости модуля Access: handlers, сервисы и другую инфраструктуру модуля.
 builder.Services.AddAccessModule(builder.Configuration);
