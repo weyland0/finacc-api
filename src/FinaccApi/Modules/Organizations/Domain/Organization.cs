@@ -1,6 +1,6 @@
 using FinaccApi.Shared.Kernel;
 
-namespace FinaccApi.Modules.Organization.Domain;
+namespace FinaccApi.Modules.Organizations.Domain;
 
 /// <summary>
 /// Модель организации.
