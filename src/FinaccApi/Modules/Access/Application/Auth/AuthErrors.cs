@@ -14,6 +14,11 @@ public static class AuthErrors
         "User with this email already exists.",
         ErrorType.Conflict);
 
+    public static readonly Error PhoneAlreadyExists = new(
+        "Auth.PhoneAlreadyExists",
+        "User with this phone already exists.",
+        ErrorType.Conflict);
+
     public static readonly Error InvalidCredentials = new(
         "Auth.InvalidCredentials",
         "Invalid email or password.",

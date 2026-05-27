@@ -32,8 +32,11 @@ public class RegisterHandler
         var emailExists = await _context.Users
             .AnyAsync(x => x.Email == command.Email, cancellationToken);
 
-        if (emailExists)
-            return Result.Failure<AuthResponse>(AuthErrors.EmailAlreadyExists);
+        var phoneExists = await _context.Users
+            .AnyAsync(x => x.Phone == command.Phone, cancellationToken);
+
+        if (phoneExists)
+            return Result.Failure<AuthResponse>(AuthErrors.PhoneAlreadyExists);
 
         var passwordHash = _passwordHasher.Hash(command.Password);
 
