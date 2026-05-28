@@ -46,4 +46,34 @@ public class Organization : AuditableEntity
     /// Контактный телефон организации.
     /// </summary>
     public string? Phone { get; private set; }
+
+    /// <summary>
+    /// Конструктор.
+    /// </summary>
+    public Organization(string name)
+    {
+        Name = name;
+    }
+
+    /// <summary>
+    /// Конструктор с полными данными.
+    /// </summary>
+    public Organization(
+        string name,
+        string? legalEntityName,
+        string? registrationNumber,
+        string? taxId,
+        string? fullAddress,
+        string? email,
+        string? phone
+        )
+    {
+        Name = name;
+        LegalEntityName = legalEntityName;
+        RegistrationNumber = registrationNumber;
+        TaxId = taxId;
+        FullAddress = fullAddress;
+        Email = email;
+        Phone = phone;
+    }
 }
