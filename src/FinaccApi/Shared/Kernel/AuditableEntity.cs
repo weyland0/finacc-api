@@ -33,7 +33,9 @@ public abstract class AuditableEntity : Entity
     public void MarkCreated(int? userId)
     {
         CreatedBy = userId;
+        UpdatedBy = userId;
         CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
     }
 
     /// <summary>
