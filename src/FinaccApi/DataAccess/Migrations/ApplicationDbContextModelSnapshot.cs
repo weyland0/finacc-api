@@ -22,6 +22,69 @@ namespace FinaccApi.DataAccess.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("FinaccApi.Modules.Access.Domain.OrganizationMember", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("integer")
+                        .HasColumnName("organization_id");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer")
+                        .HasColumnName("role_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("UpdatedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_organization_members");
+
+                    b.HasIndex("CreatedBy")
+                        .HasDatabaseName("ix_organization_members_created_by");
+
+                    b.HasIndex("OrganizationId")
+                        .HasDatabaseName("ix_organization_members_organization_id");
+
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_organization_members_role_id");
+
+                    b.HasIndex("UpdatedBy")
+                        .HasDatabaseName("ix_organization_members_updated_by");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_organization_members_user_id");
+
+                    b.ToTable("organization_members", (string)null);
+                });
+
             modelBuilder.Entity("FinaccApi.Modules.Access.Domain.Permission", b =>
                 {
                     b.Property<int>("Id")
@@ -238,6 +301,44 @@ namespace FinaccApi.DataAccess.Migrations
                         .HasDatabaseName("ix_organizations_updated_by");
 
                     b.ToTable("organizations", (string)null);
+                });
+
+            modelBuilder.Entity("FinaccApi.Modules.Access.Domain.OrganizationMember", b =>
+                {
+                    b.HasOne("FinaccApi.Modules.Access.Domain.User", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("fk_organization_members_users_created_by");
+
+                    b.HasOne("FinaccApi.Modules.Organizations.Domain.Organization", null)
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_organization_members_organizations_organization_id");
+
+                    b.HasOne("FinaccApi.Modules.Access.Domain.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_organization_members_roles_role_id");
+
+                    b.HasOne("FinaccApi.Modules.Access.Domain.User", null)
+                        .WithMany()
+                        .HasForeignKey("UpdatedBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("fk_organization_members_users_updated_by");
+
+                    b.HasOne("FinaccApi.Modules.Access.Domain.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_organization_members_users_user_id");
                 });
 
             modelBuilder.Entity("FinaccApi.Modules.Access.Domain.RolePermission", b =>
