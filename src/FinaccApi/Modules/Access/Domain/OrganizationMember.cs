@@ -27,4 +27,27 @@ public class OrganizationMember : AuditableEntity, IOrganizationOwnedEntity
     /// (Active / Removed / Left / Suspended)
     /// </summary>
     public string Status { get; private set; } = null!;
+
+
+    /// <summary>
+    /// Конструктор для создания участника организации.
+    /// </summary>
+    public OrganizationMember(int userId, int organizationId, int roleId)
+    {
+        UserId = userId;
+        OrganizationId = organizationId;
+        RoleId = roleId;
+        Status = OrganizationMemberStatus.Active;
+    }
+
+    /// <summary>
+    /// Конструктор для создания участника организации с указанием статуса.
+    /// </summary>
+    public OrganizationMember(int userId, int organizationId, int roleId, string status)
+    {
+        UserId = userId;
+        OrganizationId = organizationId;
+        RoleId = roleId;
+        Status = status;
+    }
 }
