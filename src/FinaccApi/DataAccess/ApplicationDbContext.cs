@@ -14,6 +14,7 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+    public DbSet<OrganizationMember> OrganizationMembers => Set<OrganizationMember>();
 
     /// <summary>
     /// Конструктор контекста базы данных.
