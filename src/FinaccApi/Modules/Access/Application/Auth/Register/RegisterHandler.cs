@@ -70,14 +70,17 @@ public class RegisterHandler
         var response = new AuthResponse
         {
             AccessToken = accessToken,
-            CurrentUser = new CurrentUserResponse
+            User = new UserResponse
             {
                 Id = user.Id,
                 Email = user.Email,
                 Phone = user.Phone,
                 FirstName = user.FirstName,
                 LastName = user.LastName
-            }
+            },
+            Organization = null,
+            Role = null,
+            Permissions = []
         };
 
         return Result.Success(response); 

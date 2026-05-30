@@ -3,7 +3,7 @@ namespace FinaccApi.Modules.Access.Application.Auth;
 /// <summary>
 /// Данные текущего пользователя, возвращаемые клиенту после аутентификации.
 /// </summary>
-public class CurrentUserResponse
+public class UserResponse
 {
     /// <summary>
     /// Идентификатор пользователя.

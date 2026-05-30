@@ -13,5 +13,20 @@ public class AuthResponse
     /// <summary>
     /// Профиль аутентифицированного пользователя.
     /// </summary>
-    public CurrentUserResponse CurrentUser { get; set; } = null!;
+    public UserResponse User { get; set; } = null!;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public OrganizationResponse? Organization { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public RoleResponse? Role { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public IList<string> Permissions { get; set; } = [];
 }
