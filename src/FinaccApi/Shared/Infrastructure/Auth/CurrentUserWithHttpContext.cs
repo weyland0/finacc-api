@@ -26,7 +26,7 @@ public class CurrentUserWithHttpContext : ICurrentUser
     /// <summary>
     /// Аксессор текущего HTTP-контекста.
     /// </summary>
-    private IHttpContextAccessor _httpContextAccessor;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     /// <summary>
     /// Создает сервис доступа к данным текущего пользователя.
