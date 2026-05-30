@@ -2,6 +2,7 @@ using FinaccApi.Modules.Access.Infrastructure;
 using FinaccApi.Modules.Access.Application.Auth.Register;
 using FinaccApi.Modules.Access.Application.Auth.Login;
 using FinaccApi.Modules.Access.Application.Onboarding;
+using FinaccApi.Shared.Application.MultiTenancy;
 
 namespace FinaccApi.Modules.Access;
 
@@ -13,6 +14,7 @@ public static class AccessModule
     {
         services.AddScoped<IPasswordHasher, PasswordHasherSha256>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<ICurrentOrganization, CurrentOrganization>();
 
         services.AddScoped<RegisterHandler>();
         services.AddScoped<LoginHandler>();
