@@ -31,19 +31,20 @@ public interface ICurrentOrganization
     bool HasOrganization { get; }
 
     /// <summary>
-    /// Проверяет наличие разрешения у текущего пользователя в активной организации.
+    /// Проверяет наличие разрешения у текущего пользователя в загруженном контексте активной организации.
     /// </summary>
     /// <param name="permissionCode">Код проверяемого разрешения.</param>
     /// <returns>True, если разрешение есть в текущем контексте организации; иначе false.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Выбрасывается, если контекст организации еще не был загружен.
+    /// </exception>
     bool HasPermission(string permissionCode);
 
 
     /// <summary>
     /// Загружает контекст активной организации текущего пользователя.
     /// </summary>
-    /// <exception cref="InvalidOperationException"> 
-    /// Выбрасывается, если текущий пользователь не аутентифицирован.
-    /// </exception>
+    /// <param name="cancellationToken">Токен отмены асинхронной операции.</param>
     /// <returns>Задача, представляющая асинхронную загрузку контекста.</returns>
-    Task LoadContext();
+    Task LoadContext(CancellationToken cancellationToken);
 }
