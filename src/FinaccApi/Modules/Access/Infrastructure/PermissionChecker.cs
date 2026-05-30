@@ -32,10 +32,10 @@ public class PermissionChecker : IPermissionChecker
         if (string.IsNullOrWhiteSpace(permissionCode))
             throw new ArgumentException("Permission code must be not empty.");
 
+        await _currentOrganization.LoadContext();
+
         if (!_currentOrganization.HasOrganization)
             return false;
-
-        await _currentOrganization.LoadContext();
 
         return _currentOrganization.HasPermission(permissionCode);
     }
