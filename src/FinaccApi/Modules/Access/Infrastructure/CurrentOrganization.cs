@@ -49,9 +49,9 @@ public class CurrentOrganization : ICurrentOrganization
     /// <summary>
     /// Проверяет, имеет ли текущий пользователь определенное разрешение в контексте своей организации.
     /// </summary>
-    public bool HasPermission(string permission)
+    public bool HasPermission(string permissionCode)
     {
-        return Permissions.Contains(permission);
+        return Permissions.Contains(permissionCode);
     }
 
     /// <summary>

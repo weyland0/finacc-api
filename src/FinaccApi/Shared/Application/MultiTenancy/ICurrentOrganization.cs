@@ -33,7 +33,7 @@ public interface ICurrentOrganization
     /// <summary>
     /// Проверяет, имеет ли текущий пользователь определенное разрешение в контексте своей организации.
     /// </summary>
-    bool HasPermission(string permission);
+    bool HasPermission(string permissionCode);
 
 
     /// <summary>
