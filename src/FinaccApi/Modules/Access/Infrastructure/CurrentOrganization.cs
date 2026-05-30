@@ -3,9 +3,8 @@ using FinaccApi.Shared.Application.MultiTenancy;
 using FinaccApi.Shared.Application.Auth;
 using FinaccApi.DataAccess;
 using FinaccApi.Modules.Access.Domain;
-using System.Threading.Tasks;
 
-namespace FinaccApi.Shared.Infrastructure.MultiTenancy;
+namespace FinaccApi.Modules.Access.Infrastructure;
 
 /// <summary>
 /// Интерфейс для получения информации о текущей организации, к которой принадлежит пользователь.
@@ -70,7 +69,8 @@ public class CurrentOrganization : ICurrentOrganization
             throw new InvalidOperationException("User is not authenticated");
 
         var membership = await _dbContext.OrganizationMembers.FirstOrDefaultAsync(
-            x => x.UserId == _currentUser.UserId!.Value);
+            x => x.UserId == _currentUser.UserId!.Value
+            && x.Status == OrganizationMemberStatus.Active);
 
         if (membership == null)
         {
