@@ -2,7 +2,7 @@ namespace FinaccApi.Modules.Access.Api.Auth;
 
 
 /// <summary>
-/// HTTP модель данных для входа пользователя в систему.
+/// HTTP-запрос на вход пользователя в систему.
 /// </summary>
 public class LoginRequest
 {

@@ -3,42 +3,37 @@ using FinaccApi.Shared.Kernel;
 namespace FinaccApi.Modules.Organizations.Domain;
 
 /// <summary>
-/// Модель организации.
+/// Представляет организацию, в которой пользователи ведут финансовый учет.
 /// </summary>
 public class Organization : AuditableEntity
 {
     /// <summary>
-    /// Название организации.
+    /// Краткое название организации.
     /// </summary>
     public string Name { get; private set; } = null!;
 
     /// <summary>
-    /// Юридическое название организации.
+    /// Полное юридическое название организации.
     /// </summary>
     public string? LegalEntityName { get; private set; }
 
     /// <summary>
-    /// Регистрационный номер организации или ОГРН -
-    /// уникальный цифровой код, присваиваемый при 
-    /// создании. Основным является ОГРН (13 цифр) для юрлиц 
-    /// или ОГРНИП (15 цифр) для ИП
+    /// Регистрационный номер организации: ОГРН для юридических лиц или ОГРНИП для индивидуальных предпринимателей.
     /// </summary>
     public string? RegistrationNumber { get; private set; }
 
     /// <summary>
-    /// Налоговый идентификатор организации или ИНН - 
-    /// уникальный цифровой код (10 цифр), 
-    /// присваиваемый ФНС.
+    /// Налоговый идентификатор организации, например ИНН.
     /// </summary>
     public string? TaxId { get; private set; }
 
     /// <summary>
-    /// Юридический адрес организации.
+    /// Полный юридический адрес организации.
     /// </summary>
     public string? FullAddress { get; private set; }
 
     /// <summary>
-    /// Электронная почта организации.
+    /// Контактная электронная почта организации.
     /// </summary>
     public string? Email { get; private set; }
 
@@ -48,16 +43,24 @@ public class Organization : AuditableEntity
     public string? Phone { get; private set; }
 
     /// <summary>
-    /// Конструктор.
+    /// Создает организацию с обязательным кратким названием.
     /// </summary>
+    /// <param name="name">Краткое название организации.</param>
     public Organization(string name)
     {
         Name = name;
     }
 
     /// <summary>
-    /// Конструктор с полными данными.
+    /// Создает организацию с полным набором регистрационных и контактных данных.
     /// </summary>
+    /// <param name="name">Краткое название организации.</param>
+    /// <param name="legalEntityName">Полное юридическое название организации.</param>
+    /// <param name="registrationNumber">Регистрационный номер организации.</param>
+    /// <param name="taxId">Налоговый идентификатор организации.</param>
+    /// <param name="fullAddress">Полный юридический адрес организации.</param>
+    /// <param name="email">Контактная электронная почта организации.</param>
+    /// <param name="phone">Контактный телефон организации.</param>
     public Organization(
         string name,
         string? legalEntityName,

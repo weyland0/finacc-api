@@ -1,27 +1,27 @@
 namespace FinaccApi.Modules.Access.Domain;
 
 /// <summary>
-/// Статусы участника организации.
+/// Содержит системные коды статусов участника организации.
 /// </summary>
 public static class OrganizationMemberStatus
 {
     /// <summary>
-    /// Активный участник организации.
+    /// Участник состоит в организации и может работать в ее контексте.
     /// </summary>
     public static string Active => "active";
 
     /// <summary>
-    /// Участник, удаленный из организации.
+    /// Участник был удален из организации.
     /// </summary>
     public static string Removed => "removed";
 
     /// <summary>
-    /// Участник, покинувший организацию по собственной инициативе.
+    /// Участник самостоятельно покинул организацию.
     /// </summary>
     public static string Left => "left";
 
     /// <summary>
-    /// Участник, отстраненный от участия в организации.
+    /// Участник временно отстранен от работы в организации.
     /// </summary>
     public static string Suspended => "suspended";
 }

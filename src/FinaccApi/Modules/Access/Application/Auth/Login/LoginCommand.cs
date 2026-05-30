@@ -2,7 +2,7 @@ namespace FinaccApi.Modules.Access.Application.Auth.Login;
 
 
 /// <summary>
-/// API-модель данных для входа пользователя в систему.
+/// Команда приложения для входа пользователя в систему.
 /// </summary>
 public class LoginCommand
 {

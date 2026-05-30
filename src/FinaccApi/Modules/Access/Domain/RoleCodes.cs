@@ -1,27 +1,27 @@
 namespace FinaccApi.Modules.Access.Domain;
 
 /// <summary>
-/// Класс, содержащий константы с кодами ролей доступа в системе.
+/// Содержит системные коды ролей доступа в организации.
 /// </summary>
 public static class RoleCodes
 {
     /// <summary>
-    /// Роль владельца организации.
+    /// Владелец организации с максимальными правами управления.
     /// </summary>
     public const string Owner = "owner";
 
     /// <summary>
-    /// Роль администратора организации.
+    /// Администратор организации с правами управления пользователями и настройками.
     /// </summary>
     public const string Admin = "admin";
 
     /// <summary>
-    /// Роль бухгалтера организации.
+    /// Бухгалтер организации, работающий с финансовыми данными.
     /// </summary>
     public const string Accountant = "accountant";
 
     /// <summary>
-    /// Роль зрителя организации.
+    /// Пользователь с правами просмотра без изменения данных.
     /// </summary>
     public const string Viewer = "viewer";
 }

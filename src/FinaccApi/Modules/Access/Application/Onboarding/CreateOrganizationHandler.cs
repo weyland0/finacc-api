@@ -8,11 +8,19 @@ using FinaccApi.Modules.Organizations.Domain;
 namespace FinaccApi.Modules.Access.Application.Onboarding;
 
 
+/// <summary>
+/// Обрабатывает сценарий первичного создания организации текущим пользователем.
+/// </summary>
 public class CreateOrganizationHandler
 {
     ApplicationDbContext _context;
     ICurrentUser _currentUser;
 
+    /// <summary>
+    /// Создает обработчик создания организации.
+    /// </summary>
+    /// <param name="context">Контекст базы данных приложения.</param>
+    /// <param name="currentUser">Сервис доступа к текущему пользователю.</param>
     public CreateOrganizationHandler(
         ApplicationDbContext context,
         ICurrentUser currentUser)
@@ -21,6 +29,14 @@ public class CreateOrganizationHandler
         _currentUser = currentUser;
     }
 
+    /// <summary>
+    /// Создает организацию и назначает текущего пользователя ее владельцем.
+    /// </summary>
+    /// <param name="command">Команда с регистрационными и контактными данными организации.</param>
+    /// <param name="cancellationToken">Токен отмены асинхронной операции.</param>
+    /// <returns>
+    /// Успешный результат с данными организации или ошибка, если пользователь уже состоит в активной организации.
+    /// </returns>
     public async Task<Result<OrganizationResponse>> Handle(
         CreateOrganizationCommand command,
         CancellationToken cancellationToken)

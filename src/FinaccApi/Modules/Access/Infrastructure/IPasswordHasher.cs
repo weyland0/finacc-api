@@ -1,22 +1,22 @@
 namespace FinaccApi.Modules.Access.Infrastructure;
 
 /// <summary>
-/// Интерфейс модуля хэширования паролей.
+/// Определяет операции хеширования и проверки паролей.
 /// </summary>
 public interface IPasswordHasher
 {
     /// <summary>
-    /// Хэширует пароль, введеный пользователем.
+    /// Вычисляет хеш пароля.
     /// </summary>
-    /// <param name="password"> Пароль </param>
-    /// <returns> Хеш пароля </returns>
+    /// <param name="password">Пароль в открытом виде.</param>
+    /// <returns>Хеш пароля.</returns>
     string Hash(string password);
 
     /// <summary>
-    /// Проверяет, соответствует ли введенный пользователем пароль
-    /// действительному паролю, сравнивая их хеши.
+    /// Проверяет, соответствует ли пароль сохраненному хешу.
     /// </summary>
-    /// <param name="password"> Введеный пароль </param>
-    /// <param name="hash"> Хеш дейсвтительного пароля </param>
+    /// <param name="password">Пароль в открытом виде.</param>
+    /// <param name="hash">Сохраненный хеш пароля.</param>
+    /// <returns>True, если пароль соответствует хешу; иначе false.</returns>
     bool Verify(string password, string hash);
 }

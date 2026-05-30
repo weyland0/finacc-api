@@ -2,7 +2,7 @@ namespace FinaccApi.Modules.Access.Api.Auth;
 
 
 /// <summary>
-/// HTTP модель данных для регистрации нового пользователя.
+/// HTTP-запрос на регистрацию нового пользователя.
 /// </summary>
 public class RegisterRequest
 {
@@ -12,7 +12,7 @@ public class RegisterRequest
     public string Email { get; set; } = null!;
 
     /// <summary>
-    /// Номер телефона пользователя.
+    /// Контактный телефон пользователя.
     /// </summary>
     public string Phone { get; set; } = null!;
 

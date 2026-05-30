@@ -4,15 +4,18 @@ using FinaccApi.Shared.Kernel;
 namespace FinaccApi.Shared.Infrastructure;
 
 /// <summary>
-/// Расширения для преобразования Result в IActionResult для использования в ASP.NET Core контроллерах.
+/// Содержит методы преобразования результатов приложения в HTTP-ответы ASP.NET Core.
 /// </summary>
 public static class ResultExtension
 {
     /// <summary>
-    /// Преобразует Result<T> в IActionResult.
-    /// При успехе возвращает чистый DTO (200 OK).
-    /// При ошибке возвращает ProblemDetails с соответствующим статус-кодом.
+    /// Преобразует результат со значением в HTTP-ответ.
     /// </summary>
+    /// <typeparam name="T">Тип значения успешного результата.</typeparam>
+    /// <param name="result">Результат операции приложения.</param>
+    /// <returns>
+    /// HTTP 200 со значением при успехе или <see cref="ProblemDetails"/> с подходящим статусом при ошибке.
+    /// </returns>
     public static IActionResult ToActionResult<T>(this Result<T> result)
     {
         if (result.IsSuccess)
@@ -25,10 +28,12 @@ public static class ResultExtension
     }
 
     /// <summary>
-    /// Преобразует Result в IActionResult.
-    /// При успехе возвращает 200.
-    /// При ошибке возвращает ProblemDetails с соответствующим статус-кодом.
+    /// Преобразует результат без значения в HTTP-ответ.
     /// </summary>
+    /// <param name="result">Результат операции приложения.</param>
+    /// <returns>
+    /// HTTP 200 без тела при успехе или <see cref="ProblemDetails"/> с подходящим статусом при ошибке.
+    /// </returns>
     public static IActionResult ToActionResult(this Result result)
     {
         if (result.IsSuccess) 
@@ -41,10 +46,10 @@ public static class ResultExtension
     }
 
     /// <summary>
-    /// Получает URI типа проблемы на основе HTTP статус-кода.
+    /// Возвращает URI спецификации HTTP для указанного статус-кода ошибки.
     /// </summary>
-    /// <param name="statusCode"> HTTP статус-код </param>
-    /// <returns> URI типа проблемы </returns>
+    /// <param name="statusCode">HTTP-статус ошибки.</param>
+    /// <returns>URI типа проблемы для <see cref="ProblemDetails"/>.</returns>
     private static string GetProblemType(int statusCode)
     {
         return statusCode switch
@@ -60,10 +65,10 @@ public static class ResultExtension
     }
 
     /// <summary>
-    /// Получает HTTP статус-код на основе типа ошибки.
+    /// Сопоставляет тип ошибки приложения с HTTP-статусом.
     /// </summary>
-    /// <param name="errorType"> Тип ошибки, используемый внутри API </param>
-    /// <returns> HTTP статус-код </returns>
+    /// <param name="errorType">Тип ошибки, используемый внутри API.</param>
+    /// <returns>HTTP-статус, соответствующий типу ошибки.</returns>
     private static int GetStatusCode(ErrorType errorType)
     {
         return errorType switch
@@ -79,10 +84,10 @@ public static class ResultExtension
     }
 
     /// <summary>
-    /// Преобразует внутреннюю ошибку в ProblemDetails для возвращения клиенту.
+    /// Преобразует ошибку приложения в объект <see cref="ProblemDetails"/> для ответа клиенту.
     /// </summary>
-    /// <param name="error"> Внутренняя ошибка </param>
-    /// <returns> ProblemDetails </returns>
+    /// <param name="error">Ошибка приложения.</param>
+    /// <returns>Описание проблемы в формате ASP.NET Core.</returns>
     private static ProblemDetails GetProblemDetails(Error error)
     {
         var statusCode = GetStatusCode(error.Type);

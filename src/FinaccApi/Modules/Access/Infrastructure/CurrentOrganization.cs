@@ -7,7 +7,7 @@ using FinaccApi.Modules.Access.Domain;
 namespace FinaccApi.Modules.Access.Infrastructure;
 
 /// <summary>
-/// Интерфейс для получения информации о текущей организации, к которой принадлежит пользователь.
+/// Загружает и хранит контекст активной организации текущего пользователя.
 /// </summary>
 public class CurrentOrganization : ICurrentOrganization
 {
@@ -15,6 +15,11 @@ public class CurrentOrganization : ICurrentOrganization
     private readonly ICurrentUser _currentUser;
     private bool _organizationContextLoaded = false;
 
+    /// <summary>
+    /// Создает сервис контекста организации.
+    /// </summary>
+    /// <param name="dbContext">Контекст базы данных приложения.</param>
+    /// <param name="currentUser">Сервис доступа к текущему пользователю.</param>
     public CurrentOrganization(ApplicationDbContext dbContext, ICurrentUser currentUser)
     {
         _dbContext = dbContext;
@@ -22,44 +27,47 @@ public class CurrentOrganization : ICurrentOrganization
     }
 
     /// <summary>
-    /// Идентификатор организации, к которой принадлежит текущий пользователь.
+    /// Идентификатор активной организации текущего пользователя, если контекст найден.
     /// </summary>
     public int? OrganizationId { get; private set; }
 
     /// <summary>
-    /// Идентификатор членства пользователя в организации, если применимо.
+    /// Идентификатор активного членства пользователя в организации, если контекст найден.
     /// </summary>
     public int? MembershipId { get; private set; }
 
     /// <summary>
-    /// Идентификатор роли пользователя в организации, если применимо.
+    /// Идентификатор роли пользователя в активной организации, если контекст найден.
     /// </summary>
     public int? RoleId { get; private set; }
 
     /// <summary>
-    /// Набор разрешений, связанных с ролью пользователя в организации.
+    /// Коды разрешений, связанных с ролью пользователя в активной организации.
     /// </summary>
     public IReadOnlyList<string> Permissions { get; private set; } = [];
 
     /// <summary>
-    /// Указывает, принадлежит ли текущий пользователь какой-либо организации.
+    /// Указывает, найдено ли активное членство текущего пользователя в организации.
     /// </summary>
     public bool HasOrganization { get; private set; }
 
     /// <summary>
-    /// Проверяет, имеет ли текущий пользователь определенное разрешение в контексте своей организации.
+    /// Проверяет наличие разрешения в загруженном контексте организации.
     /// </summary>
+    /// <param name="permissionCode">Код проверяемого разрешения.</param>
+    /// <returns>True, если разрешение присутствует в контексте; иначе false.</returns>
     public bool HasPermission(string permissionCode)
     {
         return Permissions.Contains(permissionCode);
     }
 
     /// <summary>
-    /// Загружает контекст организации текущего пользователя.
+    /// Загружает активное членство пользователя, его роль и список разрешений.
     /// </summary>
     /// <exception cref="InvalidOperationException"> 
-    /// Выбрасывается если текущей пользователь не аутентифицирован.
+    /// Выбрасывается, если текущий пользователь не аутентифицирован.
     /// </exception>
+    /// <returns>Задача, представляющая асинхронную загрузку контекста.</returns>
     public async Task LoadContext()
     {
         if (_organizationContextLoaded)

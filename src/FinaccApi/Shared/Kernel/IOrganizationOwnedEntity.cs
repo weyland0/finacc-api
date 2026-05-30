@@ -1,7 +1,7 @@
 namespace FinaccApi.Shared.Kernel;
 
 /// <summary>
-/// Интерфейс для сущностей, принадлежащих организации.
+/// Определяет сущность, которая принадлежит конкретной организации.
 /// </summary>
 public interface IOrganizationOwnedEntity
 {

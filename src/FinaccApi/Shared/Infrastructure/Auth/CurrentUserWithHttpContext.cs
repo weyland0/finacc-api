@@ -4,41 +4,43 @@ using FinaccApi.Shared.Application.Auth;
 namespace FinaccApi.Shared.Infrastructure.Auth;
 
 /// <summary>
-/// Реализация интерфейса ICurrentUser, которая использует HttpContext
-/// для получения информации о текущем пользователе.
+/// Получает данные текущего пользователя из claims активного HTTP-контекста.
 /// </summary>
 public class CurrentUserWithHttpContext : ICurrentUser
 {
     /// <summary>
-    /// Идентификатор текущего пользователя, если он аутентифицирован, иначе null.
+    /// Идентификатор текущего пользователя, если запрос аутентифицирован.
     /// </summary>
     public int? UserId { get => ParseUserIdFromClaims(); }
 
     /// <summary>
-    /// Электронная почта текущего пользователя, если он аутентифицирован, иначе null.
+    /// Электронная почта текущего пользователя, если запрос аутентифицирован.
     /// </summary>
     public string? Email { get => ParseEmailFromClaims(); }
 
     /// <summary>
-    /// Признак того, что текущий пользователь аутентифицирован.
+    /// Признак наличия аутентифицированного пользователя в текущем HTTP-контексте.
     /// </summary>
     public bool IsAuthenticated { get => CheckIsAuthenticated(); }
 
     /// <summary>
-    /// HttpContextAccessor для доступа к текущему HTTP-контексту,
-    /// который содержит информацию о пользователе и его аутентификации.
+    /// Аксессор текущего HTTP-контекста.
     /// </summary>
     private IHttpContextAccessor _httpContextAccessor;
 
+    /// <summary>
+    /// Создает сервис доступа к данным текущего пользователя.
+    /// </summary>
+    /// <param name="httpContextAccessor">Аксессор текущего HTTP-контекста.</param>
     public CurrentUserWithHttpContext(IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;
     }
 
     /// <summary>
-    /// Извлекает идентификатор пользователя из его claims (утверждений).
+    /// Извлекает идентификатор пользователя из claims текущего запроса.
     /// </summary>
-    /// <returns> Идентификатор пользователя, если он был найден, иначе null. </returns>
+    /// <returns>Идентификатор пользователя, если он найден и успешно преобразован; иначе null.</returns>
     private int? ParseUserIdFromClaims()
     {
         var user = _httpContextAccessor.HttpContext?.User;
@@ -56,9 +58,9 @@ public class CurrentUserWithHttpContext : ICurrentUser
     }
 
     /// <summary>
-    /// Извлекает email пользователя из его claims (утверждений).
+    /// Извлекает электронную почту пользователя из claims текущего запроса.
     /// </summary>
-    /// <returns> Email пользователя, если он был найден, иначе null. </returns>
+    /// <returns>Электронная почта пользователя, если она найдена; иначе null.</returns>
     private string? ParseEmailFromClaims()
     {
         var user = _httpContextAccessor.HttpContext?.User;
@@ -73,9 +75,9 @@ public class CurrentUserWithHttpContext : ICurrentUser
     }
 
     /// <summary>
-    /// Проверяет, аутентифицирован ли текущий пользователь, 
-    /// основываясь на его claims (утверждениях).
+    /// Проверяет, содержит ли текущий HTTP-контекст аутентифицированного пользователя.
     /// </summary>
+    /// <returns>True, если пользователь аутентифицирован; иначе false.</returns>
     private bool CheckIsAuthenticated()
     {
         var user = _httpContextAccessor.HttpContext?.User;

@@ -3,19 +3,17 @@ using FinaccApi.Shared.Kernel;
 namespace FinaccApi.Modules.Access.Domain;
 
 /// <summary>
-/// Модель прав доступа.
-/// Хранит конкретные разрешения на конкретное действие в системе.
+/// Описывает отдельное разрешение на выполнение действия в системе.
 /// </summary>
 public class Permission : Entity
 {
     /// <summary>
-    /// Код разрешения на выполнение действия.
-    /// Например: "Accounts.View", "Invoices.Pay" и т.д.
+    /// Уникальный код разрешения, например "Accounts.View" или "Invoices.Pay".
     /// </summary>
     public string Code { get; private set; } = null!;
 
     /// <summary>
-    /// Описание разрешения на выполнение действия.
+    /// Текстовое описание действия, которое разрешает это право.
     /// </summary>
     public string? Description { get; private set; }
 }

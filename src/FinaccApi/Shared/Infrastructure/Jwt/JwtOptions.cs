@@ -1,32 +1,32 @@
 namespace FinaccApi.Shared.Infrastructure.Jwt;
 
 /// <summary>
-/// Настройки для JWT, загружаемые из конфигурации приложения.
+/// Настройки JWT, загружаемые из конфигурации приложения.
 /// </summary>
 public sealed class JwtOptions
 {
     /// <summary>
-    /// Имя секции в конфигурации.
+    /// Имя секции конфигурации, содержащей настройки JWT.
     /// </summary>
     public const string SectionName = "Jwt";
 
     /// <summary>
-    /// Издатель токена.
+    /// Значение issuer, указывающее издателя токена.
     /// </summary>
     public string Issuer { get; init; } = null!;
 
     /// <summary>
-    /// Аудитория токена.
+    /// Значение audience, указывающее получателя токена.
     /// </summary>
     public string Audience { get; init; } = null!;
     
     /// <summary>
-    /// Секретный ключ для подписи токена.
+    /// Секретный ключ, используемый для подписи JWT.
     /// </summary>
     public string Secret { get; init; } = null!;
 
     /// <summary>
-    /// Время жизни токена в минутах.
+    /// Время жизни access token в минутах.
     /// </summary>
     public int AccessTokenLifetimeMinutes { get; init; }
 }

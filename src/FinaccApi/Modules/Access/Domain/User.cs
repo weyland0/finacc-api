@@ -3,12 +3,12 @@ using FinaccApi.Shared.Kernel;
 namespace FinaccApi.Modules.Access.Domain;
 
 /// <summary>
-/// Модель пользователя.
+/// Представляет учетную запись пользователя системы.
 /// </summary>
 public class User : Entity
 {
     /// <summary>
-    /// Электронная почта пользователя.
+    /// Электронная почта пользователя, используемая для входа в систему.
     /// </summary>
     public string Email { get; private set; } = null!;
 
@@ -18,12 +18,12 @@ public class User : Entity
     public string Phone { get; set; } = null!;
 
     /// <summary>
-    /// Хэш пароля пользователя.
+    /// Хеш пароля пользователя.
     /// </summary>
     public string PasswordHash { get; private set; } = null!;
 
     /// <summary>
-    /// Реальное имя пользователя.
+    /// Имя пользователя.
     /// </summary>
     public string FirstName { get; set; } = null!;
 
@@ -33,12 +33,18 @@ public class User : Entity
     public string LastName { get; set; } = null!;
 
     /// <summary>
-    /// Статус пользователя. 
-    /// (Active / Inactive)
+    /// Код текущего статуса пользователя.
     /// </summary>
     public string Status { get; set; } = null!;
 
-
+    /// <summary>
+    /// Создает активного пользователя с указанными учетными данными.
+    /// </summary>
+    /// <param name="email">Электронная почта пользователя.</param>
+    /// <param name="phone">Контактный телефон пользователя.</param>
+    /// <param name="passwordHash">Хеш пароля пользователя.</param>
+    /// <param name="firstName">Имя пользователя.</param>
+    /// <param name="lastName">Фамилия пользователя.</param>
     public User(
         string email,
         string phone,

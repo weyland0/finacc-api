@@ -7,7 +7,7 @@ using FinaccApi.Modules.Access.Domain;
 namespace FinaccApi.Modules.Access.Application.Auth.Register;
 
 /// <summary>
-/// Обработчик команды регистрации нового пользователя.
+/// Обрабатывает регистрацию нового пользователя.
 /// </summary>
 public class RegisterHandler
 {
@@ -15,6 +15,12 @@ public class RegisterHandler
     IPasswordHasher _passwordHasher;
     IJwtTokenService _tokenService;
 
+    /// <summary>
+    /// Создает обработчик регистрации пользователя.
+    /// </summary>
+    /// <param name="context">Контекст базы данных приложения.</param>
+    /// <param name="passwordHasher">Сервис хеширования паролей.</param>
+    /// <param name="tokenService">Сервис генерации JWT-токенов.</param>
     public RegisterHandler(
         ApplicationDbContext context,
         IPasswordHasher passwordHasher,
@@ -25,6 +31,14 @@ public class RegisterHandler
         _tokenService = tokenService;
     }
 
+    /// <summary>
+    /// Создает пользователя, сохраняет его пароль в виде хеша и возвращает данные аутентификации.
+    /// </summary>
+    /// <param name="command">Команда с регистрационными данными пользователя.</param>
+    /// <param name="cancellationToken">Токен отмены асинхронной операции.</param>
+    /// <returns>
+    /// Успешный результат с access token и данными пользователя или ошибка, если телефон уже используется.
+    /// </returns>
     public async Task<Result<AuthResponse>> Handle(
         RegisterCommand command,
         CancellationToken cancellationToken)

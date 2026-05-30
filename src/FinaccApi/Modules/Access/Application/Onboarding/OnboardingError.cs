@@ -3,12 +3,13 @@ using FinaccApi.Shared.Kernel;
 namespace FinaccApi.Modules.Access.Application.Onboarding;
 
 /// <summary>
-/// Класс, содержащий определения ошибок, 
-/// которые могут возникать в процессе аутентификации
-/// и авторизации пользователей.
+/// Содержит ошибки сценариев подключения пользователя к организации.
 /// </summary>
 public static class OnboardingErrors
 {
+    /// <summary>
+    /// Ошибка, возникающая при попытке создать организацию пользователем, который уже состоит в активной организации.
+    /// </summary>
     public static readonly Error UserAlreadyHasOrganization = new(
         "Onboarding.UserAlreadyHasOrganization",
         "User already has organization.",

@@ -6,7 +6,7 @@ using FinaccApi.Modules.Access.Infrastructure;
 namespace FinaccApi.Modules.Access.Application.Auth.Login;
 
 /// <summary>
-/// Обработчик команды входа пользователя в систему.
+/// Обрабатывает вход пользователя в систему.
 /// </summary>
 public class LoginHandler
 {
@@ -14,6 +14,12 @@ public class LoginHandler
     IPasswordHasher _passwordHasher;
     IJwtTokenService _tokenService;
 
+    /// <summary>
+    /// Создает обработчик входа пользователя.
+    /// </summary>
+    /// <param name="context">Контекст базы данных приложения.</param>
+    /// <param name="passwordHasher">Сервис проверки паролей.</param>
+    /// <param name="tokenService">Сервис генерации JWT-токенов.</param>
     public LoginHandler(
         ApplicationDbContext context,
         IPasswordHasher passwordHasher,
@@ -24,18 +30,26 @@ public class LoginHandler
         _tokenService = tokenService;
     }
 
+    /// <summary>
+    /// Проверяет учетные данные пользователя и возвращает данные аутентификации.
+    /// </summary>
+    /// <param name="command">Команда с email и паролем пользователя.</param>
+    /// <param name="cancellationToken">Токен отмены асинхронной операции.</param>
+    /// <returns>
+    /// Успешный результат с access token и данными пользователя или ошибка некорректных учетных данных.
+    /// </returns>
     public async Task<Result<AuthResponse>> Handle(
         LoginCommand command,
         CancellationToken cancellationToken)
     {
-        // Проверяем, существует ли пользователь с указанной электронной почтой
+        // Ищем пользователя по электронной почте.
         var user = await _context.Users.FirstOrDefaultAsync(
             u => u.Email == command.Email, cancellationToken);
 
         if (user == null)
             return Result.Failure<AuthResponse>(AuthErrors.InvalidCredentials);
 
-        // Проверяем, совпадает ли введенный пароль с реальным паролем пользователя
+        // Сравниваем введенный пароль с сохраненным хешем.
         if (_passwordHasher.Verify(command.Password, user.PasswordHash) == false)
             return Result.Failure<AuthResponse>(AuthErrors.InvalidCredentials);
 

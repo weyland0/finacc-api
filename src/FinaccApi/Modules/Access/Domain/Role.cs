@@ -3,37 +3,39 @@ using FinaccApi.Shared.Kernel;
 namespace FinaccApi.Modules.Access.Domain;
 
 /// <summary>
-/// Модель роли.
-/// Показывает кем является пользователь в организации.
+/// Представляет роль пользователя в организации.
 /// </summary>
 public class Role : Entity
 {
     /// <summary>
-    /// Название роли.
+    /// Отображаемое название роли.
     /// </summary>
     public string Name { get; private set; } = null!;
 
     /// <summary>
-    /// Код роли - системное обозначение роли.
+    /// Системный код роли.
     /// </summary>
     public string Code { get; private set; } = null!;
 
     /// <summary>
-    /// Связанные права доступа роли.
+    /// Внутренний список связей роли с разрешениями.
     /// </summary>
     private readonly List<RolePermission> _rolePermissions = new();
+
+    /// <summary>
+    /// Разрешения, назначенные роли через связи роль-разрешение.
+    /// </summary>
     public IReadOnlyCollection<RolePermission> RolePermissions => _rolePermissions.AsReadOnly();
 
     /// <summary>
-    /// Конструктор роли.
-    /// Используется только для Entity Framework.
+    /// Создает экземпляр роли для Entity Framework.
     /// </summary>
     private Role()
     {
     }
 
     /// <summary>
-    /// Конструктор роли.
+    /// Создает роль с указанным системным кодом и названием.
     /// </summary>
     /// <param name="code">Системный код роли.</param>
     /// <param name="name">Название роли.</param>
