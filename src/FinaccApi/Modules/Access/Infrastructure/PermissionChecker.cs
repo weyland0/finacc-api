@@ -9,7 +9,7 @@ namespace FinaccApi.Modules.Access.Infrastructure;
 /// </summary>
 public class PermissionChecker : IPermissionChecker
 {
-    ICurrentOrganization _currentOrganization;
+    private readonly ICurrentOrganization _currentOrganization;
 
     /// <summary>
     /// Создает сервис проверки разрешений.
@@ -30,9 +30,9 @@ public class PermissionChecker : IPermissionChecker
     public async Task<bool> HasPermission(string permissionCode, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(permissionCode))
-            throw new ArgumentException("Permission code must be not empty.");
+            throw new ArgumentException("Permission code must not be empty.", nameof(permissionCode));
 
-        await _currentOrganization.LoadContext();
+        await _currentOrganization.LoadContext(cancellationToken);
 
         if (!_currentOrganization.HasOrganization)
             return false;
