@@ -10,7 +10,7 @@ namespace FinaccApi.Modules.Access.Api.Auth;
 /// Контроллер регистрации и входа пользователей.
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/auth")]
 public class AuthController
 {
     RegisterHandler _registerHandler;
