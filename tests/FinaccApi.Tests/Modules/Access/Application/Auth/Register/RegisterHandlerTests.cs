@@ -25,10 +25,10 @@ public sealed class RegisterHandlerTests
 
         Assert.IsTrue(result.IsSuccess);
 
-        Assert.AreEqual("new@test.com", result.Value.CurrentUser.Email);
-        Assert.AreEqual("+79990000000", result.Value.CurrentUser.Phone);
-        Assert.AreEqual("John", result.Value.CurrentUser.FirstName);
-        Assert.AreEqual("Smith", result.Value.CurrentUser.LastName);
+        Assert.AreEqual("new@test.com", result.Value.User.Email);
+        Assert.AreEqual("+79990000000", result.Value.User.Phone);
+        Assert.AreEqual("John", result.Value.User.FirstName);
+        Assert.AreEqual("Smith", result.Value.User.LastName);
         Assert.IsFalse(string.IsNullOrWhiteSpace(result.Value.AccessToken));
 
         var user = await context.Users.SingleAsync();
