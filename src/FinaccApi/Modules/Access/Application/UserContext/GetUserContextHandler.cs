@@ -40,7 +40,7 @@ public class GetUserContextHandler
     public async Task<Result<UserContextResponse>> Handle(CancellationToken cancellationToken)
     {
         var user = await _dbContext.Users.FirstOrDefaultAsync(
-            x => x.Id == _currentUser.UserId!.Value && x.Status == UserStatus.Active,
+            x => x.Id == _currentUser.RequiredUserId && x.Status == UserStatus.Active,
             cancellationToken);
 
         if (user == null)

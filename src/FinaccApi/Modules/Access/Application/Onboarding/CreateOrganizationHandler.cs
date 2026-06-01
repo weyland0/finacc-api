@@ -43,7 +43,7 @@ public class CreateOrganizationHandler
     {
         var alreadyHasOrganization = await _context.OrganizationMembers
             .AnyAsync(x =>
-                x.UserId == _currentUser.UserId &&
+                x.UserId == _currentUser.RequiredUserId &&
                 x.Status == OrganizationMemberStatus.Active,
                 cancellationToken);
 
@@ -63,19 +63,19 @@ public class CreateOrganizationHandler
             command.Phone
         );
 
-        organization.MarkCreated(_currentUser.UserId!.Value);
+        organization.MarkCreated(_currentUser.RequiredUserId);
 
         _context.Organizations.Add(organization);
         await _context.SaveChangesAsync(cancellationToken);
 
 
         var member = new OrganizationMember(
-            _currentUser.UserId!.Value,
+            _currentUser.RequiredUserId,
             organization.Id,
             ownerRole!.Id
         );
 
-        member.MarkCreated(_currentUser.UserId!.Value);
+        member.MarkCreated(_currentUser.RequiredUserId);
 
         _context.OrganizationMembers.Add(member);
         await _context.SaveChangesAsync(cancellationToken);

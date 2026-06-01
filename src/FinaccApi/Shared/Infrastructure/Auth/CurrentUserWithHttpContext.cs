@@ -24,6 +24,22 @@ public class CurrentUserWithHttpContext : ICurrentUser
     public bool IsAuthenticated { get => CheckIsAuthenticated(); }
 
     /// <summary>
+    /// Идентификатор текущего пользователя, если запрос аутентифицирован
+    /// и он содержит корректный userId в claims.
+    /// userId считается корректным, если он имеет тип int и занчение больше 0.
+    /// </summary>
+    public int RequiredUserId =>
+        UserId ?? throw new InvalidOperationException("Authenticated user id claim is missing or invalid.");
+
+    /// <summary>
+    /// Идентификатор текущего пользователя, если запрос аутентифицирован
+    /// и он содержит корректный email в claims.
+    /// </summary>
+    public string RequiredEmail =>
+        Email ?? throw new InvalidOperationException("Authenticated user email claim is missing.");
+
+
+    /// <summary>
     /// Аксессор текущего HTTP-контекста.
     /// </summary>
     private readonly IHttpContextAccessor _httpContextAccessor;
