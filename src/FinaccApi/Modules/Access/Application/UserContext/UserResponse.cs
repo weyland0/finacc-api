@@ -1,4 +1,4 @@
-namespace FinaccApi.Modules.Access.Application.Auth;
+namespace FinaccApi.Modules.Access.Application.UserContext;
 
 /// <summary>
 /// Данные текущего пользователя, возвращаемые клиенту после аутентификации.

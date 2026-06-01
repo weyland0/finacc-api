@@ -4,6 +4,7 @@ using FinaccApi.Modules.Access.Application.Auth.Login;
 using FinaccApi.Modules.Access.Application.Onboarding;
 using FinaccApi.Shared.Application.MultiTenancy;
 using FinaccApi.Shared.Application.Auth;
+using FinaccApi.Modules.Access.Application.UserContext;
 
 namespace FinaccApi.Modules.Access;
 
@@ -26,10 +27,12 @@ public static class AccessModule
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<ICurrentOrganization, CurrentOrganization>();
         services.AddScoped<IPermissionChecker, PermissionChecker>();
+        services.AddScoped<UserContextFactory>();
 
         services.AddScoped<RegisterHandler>();
         services.AddScoped<LoginHandler>();
         services.AddScoped<CreateOrganizationHandler>();
+        services.AddScoped<GetUserContextHandler>();
 
         return services;
     }

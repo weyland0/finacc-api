@@ -3,6 +3,7 @@ using FinaccApi.Shared.Kernel;
 using FinaccApi.DataAccess;
 using FinaccApi.Modules.Access.Infrastructure;
 using FinaccApi.Modules.Access.Domain;
+using FinaccApi.Modules.Access.Application.UserContext;
 
 namespace FinaccApi.Modules.Access.Application.Auth.Register;
 
@@ -70,17 +71,20 @@ public class RegisterHandler
         var response = new AuthResponse
         {
             AccessToken = accessToken,
-            User = new UserResponse
+            UserContext = new UserContextResponse
             {
-                Id = user.Id,
-                Email = user.Email,
-                Phone = user.Phone,
-                FirstName = user.FirstName,
-                LastName = user.LastName
-            },
-            Organization = null,
-            Role = null,
-            Permissions = []
+                User = new UserResponse
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Phone = user.Phone,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
+                },
+                Organization = null,
+                Role = null,
+                Permissions = []
+            }
         };
 
         return Result.Success(response); 
