@@ -47,11 +47,13 @@ public class LoginHandler
         LoginCommand command,
         CancellationToken cancellationToken)
     {
+        // Вход неактивному пользователю пока запрещен.
+        // В будущем продумать как пользователю будет предоставляться
+        // информация о том, что вход отклонен из-за неактивного статуса
+        // и как пользователь сможет вновь получить активный статус.
         var user = await _dbContext.Users.FirstOrDefaultAsync(
-            u => u.Email == command.Email, cancellationToken);
-
-        if (user == null)
-            return Result.Failure<AuthResponse>(AuthErrors.InvalidCredentials);
+            u => u.Email == command.Email && u.Status == UserStatus.Active,
+            cancellationToken);
 
         if (user == null || !_passwordHasher.Verify(command.Password, user.PasswordHash))
             return Result.Failure<AuthResponse>(AuthErrors.InvalidCredentials);
