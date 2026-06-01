@@ -1,4 +1,5 @@
 using System.Text;
+using System.Security.Claims;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -110,6 +111,21 @@ builder.Services
 
             // Небольшой допуск на расхождение времени между сервером и клиентом.
             ClockSkew = TimeSpan.FromMinutes(1)
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = context =>
+            {
+                var userIdClaim = context.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (!int.TryParse(userIdClaim, out var userId) || userId <= 0)
+                {
+                    context.Fail("Token does not contain a valid user id.");
+                }
+
+                return Task.CompletedTask;
+            }
         };
     });
 
