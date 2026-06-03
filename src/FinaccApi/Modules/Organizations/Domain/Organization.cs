@@ -68,8 +68,7 @@ public class Organization : AuditableEntity
         string? taxId,
         string? fullAddress,
         string? email,
-        string? phone
-        )
+        string? phone)
     {
         Name = name;
         LegalEntityName = legalEntityName;
@@ -78,5 +77,23 @@ public class Organization : AuditableEntity
         FullAddress = fullAddress;
         Email = email;
         Phone = phone;
+    }
+
+    public void Update(
+        string? name,
+        string? legalEntityName,
+        string? registrationNumber,
+        string? taxId,
+        string? fullAddress,
+        string? email,
+        string? phone)
+    {
+        Name = name ?? Name;
+        LegalEntityName = legalEntityName ?? LegalEntityName;
+        RegistrationNumber = registrationNumber ?? RegistrationNumber;
+        TaxId = taxId ?? TaxId;
+        FullAddress = fullAddress ?? FullAddress;
+        Email = email ?? Email;
+        Phone = phone ?? Phone;
     }
 }
