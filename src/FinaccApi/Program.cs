@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using FinaccApi.DataAccess;
 using FinaccApi.Shared.Infrastructure.Jwt;
 using FinaccApi.Modules.Access;
+using FinaccApi.Modules.Organizations;
 using FinaccApi.Shared.Application.Auth;
 using FinaccApi.Shared.Infrastructure.Auth;
 
@@ -145,6 +146,8 @@ builder.Services.AddScoped<ICurrentUser, CurrentUserWithHttpContext>();
 
 // Регистрирует зависимости модуля Access: handlers, сервисы и другую инфраструктуру модуля.
 builder.Services.AddAccessModule(builder.Configuration);
+
+builder.Services.AddOrganizationsModule(builder.Configuration);
 
 
 var app = builder.Build();
