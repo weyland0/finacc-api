@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using FinaccApi.Modules.Access.Domain;
 using FinaccApi.Modules.Organizations.Domain;
+using FinaccApi.Modules.Categories.Domain;
 
 namespace FinaccApi.DataAccess;
 
@@ -15,6 +16,7 @@ public sealed class ApplicationDbContext : DbContext
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
     public DbSet<OrganizationMember> OrganizationMembers => Set<OrganizationMember>();
+    public DbSet<Category> Categories => Set<Category>();
 
     /// <summary>
     /// Конструктор контекста базы данных.
