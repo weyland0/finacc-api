@@ -224,6 +224,83 @@ namespace FinaccApi.DataAccess.Migrations
                     b.ToTable("users", (string)null);
                 });
 
+            modelBuilder.Entity("FinaccApi.Modules.Categories.Domain.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ActivityType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("activity_type");
+
+                    b.Property<string>("CategoryType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("category_type");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<int?>("OrganizationId")
+                        .HasColumnType("integer")
+                        .HasColumnName("organization_id");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("integer")
+                        .HasColumnName("parent_id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("UpdatedBy")
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_categories");
+
+                    b.HasIndex("CreatedBy")
+                        .HasDatabaseName("ix_categories_created_by");
+
+                    b.HasIndex("OrganizationId")
+                        .HasDatabaseName("ix_categories_organization_id");
+
+                    b.HasIndex("ParentId")
+                        .HasDatabaseName("ix_categories_parent_id");
+
+                    b.HasIndex("UpdatedBy")
+                        .HasDatabaseName("ix_categories_updated_by");
+
+                    b.HasIndex("OrganizationId", "Name", "CategoryType")
+                        .HasDatabaseName("ix_categories_organization_id_name_category_type");
+
+                    b.ToTable("categories", (string)null);
+                });
+
             modelBuilder.Entity("FinaccApi.Modules.Organizations.Domain.Organization", b =>
                 {
                     b.Property<int>("Id")
@@ -360,6 +437,35 @@ namespace FinaccApi.DataAccess.Migrations
                     b.Navigation("Permission");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("FinaccApi.Modules.Categories.Domain.Category", b =>
+                {
+                    b.HasOne("FinaccApi.Modules.Access.Domain.User", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("fk_categories_users_created_by");
+
+                    b.HasOne("FinaccApi.Modules.Organizations.Domain.Organization", null)
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_categories_organizations_organization_id");
+
+                    b.HasOne("FinaccApi.Modules.Categories.Domain.Category", null)
+                        .WithMany()
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_categories_categories_parent_id");
+
+                    b.HasOne("FinaccApi.Modules.Access.Domain.User", null)
+                        .WithMany()
+                        .HasForeignKey("UpdatedBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("fk_categories_users_updated_by");
                 });
 
             modelBuilder.Entity("FinaccApi.Modules.Organizations.Domain.Organization", b =>
