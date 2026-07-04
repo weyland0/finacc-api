@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using FinaccApi.Modules.Access.Domain;
 
-namespace finacc.DataAccess.Configurations;
+namespace FinaccApi.DataAccess.Configurations;
 
 /// <summary>
 /// Конфигурация для модели Permission.

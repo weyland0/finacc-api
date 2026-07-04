@@ -4,7 +4,7 @@ using FinaccApi.DataAccess.Configurations.Shared;
 using FinaccApi.Modules.Access.Domain;
 using FinaccApi.Modules.Organizations.Domain;
 
-namespace finacc.DataAccess.Configurations;
+namespace FinaccApi.DataAccess.Configurations;
 
 /// <summary>
 /// Конфигурация для модели OrganizationMember.
