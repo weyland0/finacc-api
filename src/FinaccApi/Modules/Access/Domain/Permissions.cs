@@ -16,6 +16,14 @@ public static class Permissions
         public const string Remove = "Members.Remove";
     }
 
+    public static class Categories
+    {
+        public const string View = "Categories.View";
+        public const string Create = "Categories.Create";
+        public const string Update = "Categories.Update";
+        public const string Delete = "Categories.Delete";
+    }
+
     public static class Accounts
     {
         public const string View = "Accounts.View";
