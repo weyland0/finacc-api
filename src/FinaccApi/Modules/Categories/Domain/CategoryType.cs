@@ -3,15 +3,15 @@ namespace FinaccApi.Modules.Categories.Domain;
 /// <summary>
 /// Коды типов категорий финансового учета.
 /// </summary>
-public static class CategoryType
+public enum CategoryType
 {
     /// <summary>
     /// Категория доходов.
     /// </summary>
-    public const string Income = "income";
+    Income = 1,
 
     /// <summary>
     /// Категория расходов.
     /// </summary>
-    public const string Expense = "expense";
+    Expense = 2
 }

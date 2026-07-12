@@ -3,20 +3,20 @@ namespace FinaccApi.Modules.Categories.Domain;
 /// <summary>
 /// Коды видов деятельности для категорий операций.
 /// </summary>
-public static class ActivityType
+public enum ActivityType
 {
     /// <summary>
     /// Операционная деятельность: основные доходы и расходы бизнеса.
     /// </summary>
-    public const string Operating = "operating";
+    Operating = 1,
 
     /// <summary>
     /// Финансовая деятельность: источники финансирования и расчеты с собственниками.
     /// </summary>
-    public const string Financial = "financial";
+    Financial = 2,
 
     /// <summary>
     /// Инвестиционная деятельность: операции с активами и инвестициями.
     /// </summary>
-    public const string Investing = "investing";
+    Investing = 3
 }

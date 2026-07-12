@@ -1,9 +1,11 @@
+using FinaccApi.Modules.Categories.Domain;
+
 namespace FinaccApi.Modules.Categories.Application.CreateCategory;
 
 public record CreateCategoryCommand(
     string Name, 
-    string CategoryType, 
-    string ActivityType,
+    CategoryType CategoryType, 
+    ActivityType ActivityType,
     string? Description,
     int? ParentCategoryId
 );
