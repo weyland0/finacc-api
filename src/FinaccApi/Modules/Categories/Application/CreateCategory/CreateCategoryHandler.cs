@@ -48,16 +48,6 @@ public class CreateCategoryHandler
             return Result.Failure<CategoryResponse>(CategoryErrors.Forbidden);
         }
 
-        if (!CheckCategoryTypeIsValid(command.CategoryType))
-        {
-            return Result.Failure<CategoryResponse>(CategoryErrors.IncorrectCategoryType);
-        }
-
-        if (!CheckActivityTypeIsValid(command.ActivityType))
-        {
-            return Result.Failure<CategoryResponse>(CategoryErrors.IncorrectActivityType);
-        }
-
         // если в запросе указана родительская категория, то надо проверить 
         // существует ли она, является доступной для текущей организации
         // и совместима по типу (доход/расход) и по типу активности.
@@ -97,7 +87,7 @@ public class CreateCategoryHandler
         return Result.Success(MapToResponse(newCategory));
     }
 
-    private CategoryResponse MapToResponse(Category category)
+    private static CategoryResponse MapToResponse(Category category)
     {
         return new CategoryResponse(
             category.Id,
@@ -108,18 +98,5 @@ public class CreateCategoryHandler
             category.OrganizationId,
             category.ParentId
         );
-    }
-
-    private bool CheckCategoryTypeIsValid(string categoryType)
-    {
-        return categoryType == CategoryType.Income ||
-               categoryType == CategoryType.Income;
-    }
-
-    private bool CheckActivityTypeIsValid(string activityType)
-    {
-        return activityType == ActivityType.Operating ||
-               activityType == ActivityType.Financial ||
-               activityType == ActivityType.Investing;
     }
 }
