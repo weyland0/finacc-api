@@ -26,10 +26,16 @@ public sealed class CategoryConfiguration : IEntityTypeConfiguration<Category>
             .IsRequired();
 
         builder.Property(x => x.CategoryType)
+            .HasConversion(
+                value => value.ToString().ToLowerInvariant(),
+                value => Enum.Parse<CategoryType>(value, true))
             .HasMaxLength(50)
             .IsRequired();
 
         builder.Property(x => x.ActivityType)
+            .HasConversion(
+                value => value.ToString().ToLowerInvariant(),
+                value => Enum.Parse<ActivityType>(value, true))
             .HasMaxLength(50)
             .IsRequired();
 
