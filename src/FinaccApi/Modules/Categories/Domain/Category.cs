@@ -15,12 +15,12 @@ public class Category : AuditableEntity
     /// <summary>
     /// Тип категории: доход или расход.
     /// </summary>
-    public string CategoryType { get; private set; } = null!;
+    public CategoryType CategoryType { get; private set; }
 
     /// <summary>
     /// Вид деятельности: операционная, финансовая или инвестиционная.
     /// </summary>
-    public string ActivityType { get; private set; } = null!;
+    public ActivityType ActivityType { get; private set; }
 
     /// <summary>
     /// Описание категории.
@@ -40,7 +40,7 @@ public class Category : AuditableEntity
     /// <summary>
     /// Создает категорию с обязательными данными.
     /// </summary>
-    public Category(string name, string categoryType, string activityType)
+    public Category(string name, CategoryType categoryType, ActivityType activityType)
     {
         Name = name;
         CategoryType = categoryType;
@@ -52,8 +52,8 @@ public class Category : AuditableEntity
     /// </summary>
     public Category(
         string name,
-        string categoryType,
-        string activityType,
+        CategoryType categoryType,
+        ActivityType activityType,
         string? description,
         int? organizationId,
         int? parendId)
