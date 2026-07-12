@@ -1,4 +1,6 @@
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Security.Claims;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
@@ -135,7 +137,11 @@ builder.Services
 builder.Services.AddAuthorization();
 
 // Регистрирует MVC/Web API контроллеры, помеченные атрибутами вроде [ApiController].
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(
+        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+});
 
 // Позволяет сервисам получать доступ к текущему HTTP-запросу через IHttpContextAccessor.
 builder.Services.AddHttpContextAccessor();
