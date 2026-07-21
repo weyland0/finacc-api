@@ -1,9 +1,11 @@
+using FinaccApi.Modules.Categories.Domain;
+
 namespace FinaccApi.Modules.Categories.Api;
 
 public record CreateCategoryRequest(
     string Name, 
-    string CategoryType, 
-    string ActivityType,
+    CategoryType CategoryType, 
+    ActivityType ActivityType,
     string? Description,
     int? ParentCategoryId
 );
