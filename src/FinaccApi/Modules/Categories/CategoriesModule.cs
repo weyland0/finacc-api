@@ -1,4 +1,5 @@
 using FinaccApi.Modules.Categories.Application.CreateCategory;
+using FluentValidation;
 
 namespace FinaccApi.Modules.Categories;
 
@@ -18,8 +19,6 @@ public static class CategoriesModule
         IConfiguration configuration)
     {
         services.AddScoped<CreateCategoryHandler>();
-        services.AddScoped<CreateCategoryCommandValidator>();
-
         return services;
     }
 }
