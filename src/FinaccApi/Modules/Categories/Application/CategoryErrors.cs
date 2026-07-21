@@ -35,14 +35,4 @@ public static class CategoryErrors
         "Category.ParentCategoryTypeConflict",
         "The specified category type is incompatible with the parent category type.",
         ErrorType.Conflict);
-
-    public static readonly Error IncorrectCategoryType = new(
-        "Category.IncorrectCategoryType",
-        "The specified category type is incorrect.",
-        ErrorType.Validation);
-
-    public static readonly Error IncorrectActivityType = new(
-        "Category.IncorrectActivityType",
-        "The specified activity type is incorrect.",
-        ErrorType.Validation);
 }

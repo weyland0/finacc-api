@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FinaccApi.Modules.Categories.Application;
 using FinaccApi.Modules.Categories.Application.CreateCategory;
-using FinaccApi.Modules.Categories.Domain;
 using FinaccApi.Shared.Infrastructure;
-using FinaccApi.Shared.Kernel;
 
 namespace FinaccApi.Modules.Categories.Api;
 
