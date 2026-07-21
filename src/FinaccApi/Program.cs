@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using FinaccApi.DataAccess;
 using FinaccApi.Shared.Infrastructure.Jwt;
-using FinaccApi.Modules.Access;
-using FinaccApi.Modules.Organizations;
 using FinaccApi.Shared.Application.Auth;
 using FinaccApi.Shared.Infrastructure.Auth;
+using FinaccApi.Modules.Access;
+using FinaccApi.Modules.Organizations;
+using FinaccApi.Modules.Categories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -154,6 +155,8 @@ builder.Services.AddScoped<ICurrentUser, CurrentUserWithHttpContext>();
 builder.Services.AddAccessModule(builder.Configuration);
 
 builder.Services.AddOrganizationsModule(builder.Configuration);
+
+builder.Services.AddCategoriesModule(builder.Configuration);
 
 
 var app = builder.Build();
