@@ -13,7 +13,7 @@ public static class CategoriesModule
     /// <param name="services">Коллекция сервисов приложения.</param>
     /// <param name="configuration">Конфигурация приложения.</param>
     /// <returns>Та же коллекция сервисов для дальнейшей настройки.</returns>
-    public static IServiceCollection AddOrganizationsModule(
+    public static IServiceCollection AddCategoriesModule(
         this IServiceCollection services,
         IConfiguration configuration)
     {
