@@ -55,7 +55,7 @@ public class CreateCategoryHandler
         {
             var parentCategory = await _dbContext.Categories.FirstOrDefaultAsync(c =>
                 (c.Id == command.ParentCategoryId) &&
-                (c.OrganizationId == null || c.OrganizationId != _currentOrganization.OrganizationId),
+                (c.OrganizationId == null || c.OrganizationId == _currentOrganization.OrganizationId),
                 cancellationToken);
 
             if (parentCategory == null)
