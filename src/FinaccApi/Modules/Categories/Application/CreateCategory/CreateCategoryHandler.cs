@@ -96,7 +96,10 @@ public class CreateCategoryHandler
             category.ActivityType,
             category.Description,
             category.OrganizationId,
-            category.ParentId
+            category.ParentId,
+            false,
+            true,
+            []
         );
     }
 }
