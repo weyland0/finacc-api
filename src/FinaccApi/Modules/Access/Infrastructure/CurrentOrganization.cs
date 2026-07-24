@@ -49,7 +49,17 @@ public class CurrentOrganization : ICurrentOrganization
     /// <summary>
     /// Указывает, найдено ли активное членство текущего пользователя в организации.
     /// </summary>
-    public bool HasOrganization { get; private set; }
+    private bool _hasOrganization;
+    public bool HasOrganization 
+    { 
+        get
+        {
+            if (!_organizationContextLoaded)
+                throw new InvalidOperationException("Organization context is not loaded.");
+
+            return _hasOrganization;
+        } 
+    }
 
     /// <summary>
     /// Проверяет наличие разрешения в загруженном контексте организации.
@@ -98,7 +108,7 @@ public class CurrentOrganization : ICurrentOrganization
             .Select(x => x.Permission.Code)
             .ToListAsync(cancellationToken);
 
-        HasOrganization = true;
+        _hasOrganization = true;
         OrganizationId = membership.OrganizationId;
         MembershipId = membership.Id;
         RoleId = membership.RoleId;
@@ -112,7 +122,7 @@ public class CurrentOrganization : ICurrentOrganization
     /// </summary>
     private void MarkContextAsEmpty()
     {
-        HasOrganization = false;
+        _hasOrganization = false;
         OrganizationId = null;
         MembershipId = null;
         RoleId = null;
