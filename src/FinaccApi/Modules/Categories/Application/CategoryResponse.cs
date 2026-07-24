@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 using FinaccApi.Modules.Categories.Domain;
 
 namespace FinaccApi.Modules.Categories.Application;
@@ -10,5 +9,8 @@ public record CategoryResponse(
     ActivityType ActivityType,
     string? Description,
     int? OrganizationId,
-    int? ParentCategoryId
+    int? ParentCategoryId,
+    bool IsGlobal,
+    bool CanEdit,
+    IReadOnlyList<CategoryResponse> Children
 );
