@@ -1,26 +1,33 @@
 using FinaccApi.Modules.Categories.Application.CreateCategory;
 using FinaccApi.Modules.Categories.Application.GetCategories;
+using FinaccApi.Modules.Categories.Application.GetCategoryById;
 using FluentValidation;
 
 namespace FinaccApi.Modules.Categories;
 
 /// <summary>
-/// Регистрирует сервисы модуля доступа в контейнере зависимостей.
+/// Модуль категорий.
 /// </summary>
 public static class CategoriesModule
 {
-    /// <summary>
-    /// Добавляет инфраструктурные сервисы и обработчики модуля доступа.
-    /// </summary>
-    /// <param name="services">Коллекция сервисов приложения.</param>
-    /// <param name="configuration">Конфигурация приложения.</param>
-    /// <returns>Та же коллекция сервисов для дальнейшей настройки.</returns>
-    public static IServiceCollection AddCategoriesModule(
-        this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        services.AddScoped<CreateCategoryHandler>();
-        services.AddScoped<GetCategoriesHandler>();
-        return services;
-    }
+	/// <summary>
+	/// Добавляет сервисы и обработчики модуля категорий.
+	/// </summary>
+	/// <param name="services"> Коллекция сервисов приложения. </param>
+	/// <param name="configuration"> Конфигурация приложения. </param>
+	/// <returns> Коллекцию сервисов приложения. </returns>
+	public static IServiceCollection AddCategoriesModule(
+		this IServiceCollection services,
+		IConfiguration configuration)
+	{
+		services.AddScoped<
+			IValidator<CreateCategoryCommand>,
+			CreateCategoryCommandValidator>();
+
+		services.AddScoped<CreateCategoryHandler>();
+		services.AddScoped<GetCategoriesHandler>();
+		services.AddScoped<GetCategoryByIdHandler>();
+
+		return services;
+	}
 }
