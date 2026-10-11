@@ -1,17 +1,17 @@
 namespace FinaccApi.Modules.Categories.Domain;
 
 /// <summary>
-/// Коды типов категорий финансового учета.
+/// Типы категорий финансового учета.
 /// </summary>
 public enum CategoryType
 {
-    /// <summary>
-    /// Категория доходов.
-    /// </summary>
-    Income = 1,
+	/// <summary>
+	/// Доход.
+	/// </summary>
+	Income = 1,
 
-    /// <summary>
-    /// Категория расходов.
-    /// </summary>
-    Expense = 2
+	/// <summary>
+	/// Расход.
+	/// </summary>
+	Expense = 2
 }
