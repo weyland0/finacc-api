@@ -1,9 +1,9 @@
 namespace FinaccApi.Modules.Categories.Domain;
 
-public enum CategoryScope
 /// <summary>
 /// Область поиска категории.
 /// </summary>
+public enum CategorySearchScope
 {
 	/// <summary>
 	/// Все доступные.
