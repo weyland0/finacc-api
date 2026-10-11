@@ -5,101 +5,144 @@ using FinaccApi.Shared.Application.Auth;
 using FinaccApi.Shared.Application.MultiTenancy;
 using FinaccApi.Modules.Access.Domain;
 using FinaccApi.Modules.Categories.Domain;
+using FluentValidation;
 
 namespace FinaccApi.Modules.Categories.Application.CreateCategory;
 
+/// <summary>
+/// Обработчик создания категории.
+/// </summary>
 public class CreateCategoryHandler
 {
-    ApplicationDbContext _dbContext;
-    ICurrentUser _currentUser;
-    ICurrentOrganization _currentOrganization; 
-    IPermissionChecker _permissionChecker;
+	/// <summary>
+	/// Контекст базы данных.
+	/// </summary>
+	private readonly ApplicationDbContext _dbContext;
 
-    public CreateCategoryHandler(
-        ApplicationDbContext dbContext,
-        ICurrentUser currentUser,
-        ICurrentOrganization currentOrganization,
-        IPermissionChecker permissionChecker
-        )
-    {
-        _dbContext = dbContext;
-        _currentUser = currentUser;
-        _currentOrganization = currentOrganization;
-        _permissionChecker = permissionChecker;
-    }
+	/// <summary>
+	/// Контекст текущего пользователя.
+	/// </summary>
+	private readonly ICurrentUser _currentUser;
 
-    public async Task<Result<CategoryResponse>> Handle(
-        CreateCategoryCommand command, CancellationToken cancellationToken)
-    {
-        await _currentOrganization.LoadContext(cancellationToken);
+	/// <summary>
+	/// Контекст текущей организации.
+	/// </summary>
+	private readonly ICurrentOrganization _currentOrganization;
 
-        if (!_currentOrganization.HasOrganization)
-        {
-            return Result.Failure<CategoryResponse>(CategoryErrors.OrganizationNotFound);
-        }
+	/// <summary>
+	/// Сервис проверки прав.
+	/// </summary>
+	private readonly IPermissionChecker _permissionChecker;
 
-        // проверка есть ли доступ на выполнение этой операции у пользователя,
-        // который отправил запрос
-        var permissionCheckResult = await _permissionChecker.HasPermission(
-            Permissions.Categories.Create, cancellationToken);
+	private readonly IValidator<CreateCategoryCommand> _commandValidator;
 
-        if (!permissionCheckResult)
-        {
-            return Result.Failure<CategoryResponse>(CategoryErrors.Forbidden);
-        }
+	/// <summary>
+	/// Инициализирует обработчик создания категории.
+	/// </summary>
+	/// <param name="dbContext"> Контекст базы данных. </param>
+	/// <param name="currentUser"> Контекст текущего пользователя. </param>
+	/// <param name="currentOrganization"> Контекст текущей организации. </param>
+	/// <param name="permissionChecker"> Сервис проверки прав. </param>
+	public CreateCategoryHandler(
+		ApplicationDbContext dbContext,
+		ICurrentUser currentUser,
+		ICurrentOrganization currentOrganization,
+		IPermissionChecker permissionChecker,
+		IValidator<CreateCategoryCommand> commandValidator)
+	{
+		ArgumentNullException.ThrowIfNull(dbContext);
+		ArgumentNullException.ThrowIfNull(currentUser);
+		ArgumentNullException.ThrowIfNull(currentOrganization);
+		ArgumentNullException.ThrowIfNull(permissionChecker);
+		ArgumentNullException.ThrowIfNull(commandValidator);
 
-        // если в запросе указана родительская категория, то надо проверить 
-        // существует ли она, является доступной для текущей организации
-        // и совместима по типу (доход/расход) и по типу активности.
-        if (command.ParentCategoryId != null)
-        {
-            var parentCategory = await _dbContext.Categories.FirstOrDefaultAsync(c =>
-                (c.Id == command.ParentCategoryId) &&
-                (c.OrganizationId == null || c.OrganizationId == _currentOrganization.OrganizationId),
-                cancellationToken);
+		_dbContext = dbContext;
+		_currentUser = currentUser;
+		_currentOrganization = currentOrganization;
+		_permissionChecker = permissionChecker;
+		_commandValidator = commandValidator;
+	}
 
-            if (parentCategory == null)
-            {
-                return Result.Failure<CategoryResponse>(CategoryErrors.ParentCategoryNotFound);
-            }
+	/// <summary>
+	/// Обрабатывает создание категории.
+	/// </summary>
+	/// <param name="command"> Команда создания категории. </param>
+	/// <param name="cancellationToken"> Токен отмены операции. </param>
+	/// <returns> Ответ получения конкретной категории. </returns>
+	public async Task<Result<CategoryDetailsResponse>> Handle(
+		CreateCategoryCommand command, CancellationToken cancellationToken)
+	{
+		ArgumentNullException.ThrowIfNull(command);
 
-            if (parentCategory.CategoryType != command.CategoryType ||
-                parentCategory.ActivityType != command.ActivityType)
-            {
-                return Result.Failure<CategoryResponse>(CategoryErrors.ParentCategoryTypeConflict); 
-            }
-        }
+		await _currentOrganization.LoadContext(cancellationToken);
 
-        var newCategory = new Category(
-            command.Name,
-            command.CategoryType,
-            command.ActivityType,
-            command.Description,
-            _currentOrganization.OrganizationId,
-            command.ParentCategoryId);
+		if (!_currentOrganization.HasOrganization)
+		{
+			return Result.Failure<CategoryDetailsResponse>(
+				CategoryErrors.OrganizationNotFound);
+		}
 
-        newCategory.MarkCreated(_currentUser.RequiredUserId);
-            
-        _dbContext.Categories.Add(newCategory);
+		var permissionCheckResult = await _permissionChecker.HasPermission(
+			Permissions.Categories.Create, cancellationToken);
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+		if (!permissionCheckResult)
+		{
+			return Result.Failure<CategoryDetailsResponse>(
+				CategoryErrors.Forbidden);
+		}
 
-        return Result.Success(MapToResponse(newCategory));
-    }
+		var validation = await _commandValidator
+			.ValidateAsync(command, cancellationToken);
 
-    private static CategoryResponse MapToResponse(Category category)
-    {
-        return new CategoryResponse(
-            category.Id,
-            category.Name,
-            category.CategoryType,
-            category.ActivityType,
-            category.Description,
-            category.OrganizationId,
-            category.ParentId,
-            false,
-            true,
-            []
-        );
-    }
+		if (!validation.IsValid)
+		{
+			return Result.Failure<CategoryDetailsResponse>(
+				Error.Validation(
+					"Category.Validation",
+					string.Join("; ", validation.Errors.Select(x => x.ErrorMessage))));
+		}
+
+		// если в запросе указана родительская категория, то надо проверить 
+		// существует ли она, является доступной для текущей организации
+		// и совместима по типу категории и по типу активности.
+		if (command.ParentCategoryId != null)
+		{
+			var parentCategory = await _dbContext.Categories
+				.AsNoTracking()
+				.FirstOrDefaultAsync(c =>
+					c.Id == command.ParentCategoryId &&
+					(c.IsGlobal() ||
+					c.OrganizationId == _currentOrganization.OrganizationId),
+					cancellationToken);
+
+			if (parentCategory == null)
+			{
+				return Result.Failure<CategoryDetailsResponse>(
+					CategoryErrors.ParentCategoryNotFound);
+			}
+
+			if (parentCategory.CategoryType != command.CategoryType ||
+				parentCategory.ActivityType != command.ActivityType)
+			{
+				return Result.Failure<CategoryDetailsResponse>(
+					CategoryErrors.ParentCategoryTypeConflict);
+			}
+		}
+
+		var newCategory = new Category(
+			command.Name,
+			command.CategoryType,
+			command.ActivityType,
+			command.Description,
+			_currentOrganization.OrganizationId,
+			command.ParentCategoryId);
+
+		newCategory.MarkCreated(_currentUser.RequiredUserId);
+
+		_dbContext.Categories.Add(newCategory);
+		await _dbContext.SaveChangesAsync(cancellationToken);
+
+		return Result.Success(
+			CategoryDetailsResponse.CreateFromEntity(newCategory));
+	}
 }
