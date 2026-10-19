@@ -1,6 +1,7 @@
 using FinaccApi.Modules.Categories.Application.CreateCategory;
 using FinaccApi.Modules.Categories.Application.GetCategories;
 using FinaccApi.Modules.Categories.Application.GetCategoryById;
+using FinaccApi.Modules.Categories.Application.UpdateCategory;
 using FluentValidation;
 
 namespace FinaccApi.Modules.Categories;
@@ -24,9 +25,14 @@ public static class CategoriesModule
 			IValidator<CreateCategoryCommand>,
 			CreateCategoryCommandValidator>();
 
+		services.AddScoped<
+			IValidator<UpdateCategoryCommand>,
+			UpdateCategoryCommandValidator>();
+
 		services.AddScoped<CreateCategoryHandler>();
 		services.AddScoped<GetCategoriesHandler>();
 		services.AddScoped<GetCategoryByIdHandler>();
+		services.AddScoped<UpdateCategoryHandler>();
 
 		return services;
 	}

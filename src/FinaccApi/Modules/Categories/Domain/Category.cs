@@ -67,6 +67,19 @@ public class Category : AuditableEntity
 	}
 
 	/// <summary>
+	/// Обновляет название и описание категории.
+	/// </summary>
+	/// <param name="name"> Название категории. </param>
+	/// <param name="description"> Описание категории. </param>
+	public void UpdateDetails(string name, string? description)
+	{
+		ArgumentException.ThrowIfNullOrWhiteSpace(name);
+
+		Name = name;
+		Description = description;
+	}
+
+	/// <summary>
 	/// Определяет глобальная ли категория.
 	/// </summary>
 	/// <returns> Признак глобальности. </returns>

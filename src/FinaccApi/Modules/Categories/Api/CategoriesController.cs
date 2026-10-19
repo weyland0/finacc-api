@@ -5,6 +5,7 @@ using FinaccApi.Modules.Categories.Domain;
 using FinaccApi.Modules.Categories.Application.CreateCategory;
 using FinaccApi.Modules.Categories.Application.GetCategories;
 using FinaccApi.Modules.Categories.Application.GetCategoryById;
+using FinaccApi.Modules.Categories.Application.UpdateCategory;
 
 namespace FinaccApi.Modules.Categories.Api;
 
@@ -32,23 +33,32 @@ public class CategoriesController
 	private readonly GetCategoryByIdHandler _getCategoryByIdHandler;
 
 	/// <summary>
+	/// Обработчик обновления категории.
+	/// </summary>
+	private readonly UpdateCategoryHandler _updateCategoryHandler;
+
+	/// <summary>
 	/// Инициализирует контроллер.
 	/// </summary>
-	/// <param name="createCategoryHandler"></param>
-	/// <param name="getCategoriesHandler"></param>
-	/// <param name="getCategoryByIdHandler"></param>
+	/// <param name="createCategoryHandler"> Обработчик создания категории. </param>
+	/// <param name="getCategoriesHandler"> Обработчик получения категорий. </param>
+	/// <param name="getCategoryByIdHandler"> Обработчик получения категории по идентификатору. </param>
+	/// <param name="updateCategoryHandler"> Обработчик обновления категории. </param>
 	public CategoriesController(
 		CreateCategoryHandler createCategoryHandler,
 		GetCategoriesHandler getCategoriesHandler,
-		GetCategoryByIdHandler getCategoryByIdHandler)
+		GetCategoryByIdHandler getCategoryByIdHandler,
+		UpdateCategoryHandler updateCategoryHandler)
 	{
 		ArgumentNullException.ThrowIfNull(createCategoryHandler);
 		ArgumentNullException.ThrowIfNull(getCategoriesHandler);
 		ArgumentNullException.ThrowIfNull(getCategoryByIdHandler);
+		ArgumentNullException.ThrowIfNull(updateCategoryHandler);
 
 		_createCategoryHandler = createCategoryHandler;
 		_getCategoriesHandler = getCategoriesHandler;
 		_getCategoryByIdHandler = getCategoryByIdHandler;
+		_updateCategoryHandler = updateCategoryHandler;
 	}
 
 	/// <summary>
@@ -70,6 +80,29 @@ public class CategoriesController
 			request.ParentCategoryId);
 
 		var result = await _createCategoryHandler.Handle(command, cancellationToken);
+		return result.ToActionResult();
+	}
+
+	/// <summary>
+	/// Обновляет название и описание категории организации.
+	/// </summary>
+	/// <param name="categoryId"> Идентификатор категории. </param>
+	/// <param name="request"> Запрос обновления категории. </param>
+	/// <param name="cancellationToken"> Токен отмены операции. </param>
+	/// <returns> Обновленную категорию. </returns>
+	[HttpPut("{categoryId:int}")]
+	public async Task<IActionResult> Update(
+		[FromRoute] int categoryId,
+		[FromBody] UpdateCategoryRequest request,
+		CancellationToken cancellationToken = default)
+	{
+		var command = new UpdateCategoryCommand(
+			categoryId,
+			request.Name,
+			request.Description);
+
+		var result = await _updateCategoryHandler.Handle(command, cancellationToken);
+
 		return result.ToActionResult();
 	}
 
