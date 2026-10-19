@@ -46,4 +46,14 @@ public static class CategoryErrors
         "Category.ParentCategoryTypeConflict",
         "The specified category type is incompatible with the parent category type.",
         ErrorType.Conflict);
+
+	/// <summary>
+	/// Создает ошибку валидации входных данных.
+	/// </summary>
+	/// <param name="message"> Сообщение об ошибке валидации. </param>
+	/// <returns></returns>
+	public static Error BuildValidationError(string message) => new(
+        "Category.Validation",
+        message,
+        ErrorType.Validation);
 }

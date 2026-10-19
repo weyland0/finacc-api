@@ -34,6 +34,9 @@ public class CreateCategoryHandler
 	/// </summary>
 	private readonly IPermissionChecker _permissionChecker;
 
+	/// <summary>
+	/// Валидатор команды создания.
+	/// </summary>
 	private readonly IValidator<CreateCategoryCommand> _commandValidator;
 
 	/// <summary>
@@ -43,6 +46,7 @@ public class CreateCategoryHandler
 	/// <param name="currentUser"> Контекст текущего пользователя. </param>
 	/// <param name="currentOrganization"> Контекст текущей организации. </param>
 	/// <param name="permissionChecker"> Сервис проверки прав. </param>
+	/// <param name="commandValidator"> Валидатор команды создания. </param>
 	public CreateCategoryHandler(
 		ApplicationDbContext dbContext,
 		ICurrentUser currentUser,
@@ -91,15 +95,16 @@ public class CreateCategoryHandler
 				CategoryErrors.Forbidden);
 		}
 
-		var validation = await _commandValidator
+		var commandValidationResult = await _commandValidator
 			.ValidateAsync(command, cancellationToken);
 
-		if (!validation.IsValid)
+		if (!commandValidationResult.IsValid)
 		{
+			var validationErrorMessage = string.Join("; ", 
+				commandValidationResult.Errors.Select(x => x.ErrorMessage));
+
 			return Result.Failure<CategoryDetailsResponse>(
-				Error.Validation(
-					"Category.Validation",
-					string.Join("; ", validation.Errors.Select(x => x.ErrorMessage))));
+				CategoryErrors.BuildValidationError(validationErrorMessage));
 		}
 
 		// если в запросе указана родительская категория, то надо проверить 
