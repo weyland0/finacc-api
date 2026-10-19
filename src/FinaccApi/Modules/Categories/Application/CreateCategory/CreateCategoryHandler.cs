@@ -111,7 +111,7 @@ public class CreateCategoryHandler
 				.AsNoTracking()
 				.FirstOrDefaultAsync(c =>
 					c.Id == command.ParentCategoryId &&
-					(c.IsGlobal() ||
+					(c.OrganizationId == null ||
 					c.OrganizationId == _currentOrganization.OrganizationId),
 					cancellationToken);
 
