@@ -33,5 +33,10 @@ public sealed class OrganizationMemberConfiguration : IEntityTypeConfiguration<O
             .WithMany()
             .HasForeignKey(x => x.RoleId)
             .OnDelete(DeleteBehavior.Restrict);
+
+		builder.HasIndex(x => x.UserId)
+			.IsUnique()
+			.HasDatabaseName("ux_organization_members_active_user")
+			.HasFilter("\"status\" = 'active'");
     }
 }

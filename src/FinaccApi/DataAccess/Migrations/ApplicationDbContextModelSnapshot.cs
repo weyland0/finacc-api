@@ -80,7 +80,9 @@ namespace FinaccApi.DataAccess.Migrations
                         .HasDatabaseName("ix_organization_members_updated_by");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("ix_organization_members_user_id");
+                        .IsUnique()
+                        .HasDatabaseName("ux_organization_members_active_user")
+                        .HasFilter("\"status\" = 'active'");
 
                     b.ToTable("organization_members", (string)null);
                 });
