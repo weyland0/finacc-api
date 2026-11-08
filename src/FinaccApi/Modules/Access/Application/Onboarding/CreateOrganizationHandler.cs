@@ -65,6 +65,9 @@ public class CreateOrganizationHandler
 
         organization.MarkCreated(_currentUser.RequiredUserId);
 
+		await using var transaction =
+    		await _context.Database.BeginTransactionAsync(cancellationToken);
+
         _context.Organizations.Add(organization);
         await _context.SaveChangesAsync(cancellationToken);
 
@@ -79,6 +82,8 @@ public class CreateOrganizationHandler
 
         _context.OrganizationMembers.Add(member);
         await _context.SaveChangesAsync(cancellationToken);
+
+		await transaction.CommitAsync(cancellationToken);
 
         return Result.Success(new OrganizationResponse{
             Id = organization.Id,
