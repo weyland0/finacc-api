@@ -14,6 +14,7 @@ using FinaccApi.Shared.Infrastructure.Auth;
 using FinaccApi.Modules.Access;
 using FinaccApi.Modules.Organizations;
 using FinaccApi.Modules.Categories;
+using FinaccApi.Modules.Counterparties;
 
 namespace FinaccApi;
 
@@ -238,6 +239,7 @@ public class Program
 		services.AddAccessModule(configuration);
 		services.AddOrganizationsModule(configuration);
 		services.AddCategoriesModule(configuration);
+		services.AddCounterpartiesModule(configuration);
 	}
 
 	/// <summary>

@@ -24,6 +24,32 @@ public static class Permissions
         public const string Delete = "Categories.Delete";
     }
 
+    /// <summary>
+    /// Разрешения на выполнение операций контрагентами.
+    /// </summary>
+    public static class Counterparties
+    {
+        /// <summary>
+        /// Просмотр контрагентов.
+        /// </summary>
+        public const string View = "Counterparties.View";
+
+        /// <summary>
+        /// Создание контрагентов.
+        /// </summary>
+        public const string Create = "Counterparties.Create";
+
+        /// <summary>
+        /// Изменение контрагентов.
+        /// </summary>
+        public const string Update = "Counterparties.Update";
+
+        /// <summary>
+        /// Архивирование контрагентов.
+        /// </summary>
+        public const string Archive = "Counterparties.Archive";
+    }
+
     public static class Accounts
     {
         public const string View = "Accounts.View";
