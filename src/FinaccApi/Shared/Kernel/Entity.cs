@@ -2,12 +2,12 @@ namespace FinaccApi.Shared.Kernel;
 
 
 /// <summary>
-/// Базовый класс доменной сущности с числовым идентификатором.
+/// Доменная сущность.
 /// </summary>
 public abstract class Entity
 {
     /// <summary>
-    /// Уникальный идентификатор сущности в хранилище данных.
+    /// Уникальный идентификатор сущности.
     /// </summary>
-    public int Id { get; protected set; }
+    public Guid Id { get; protected set; } = Guid.CreateVersion7();
 }

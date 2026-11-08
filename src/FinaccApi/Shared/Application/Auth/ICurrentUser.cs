@@ -8,7 +8,7 @@ public interface ICurrentUser
     /// <summary>
     /// Идентификатор текущего пользователя, если запрос аутентифицирован.
     /// </summary>
-    int? UserId { get; }
+    Guid? UserId { get; }
 
     /// <summary>
     /// Электронная почта текущего пользователя, если запрос аутентифицирован.
@@ -23,9 +23,9 @@ public interface ICurrentUser
     /// <summary>
     /// Идентификатор текущего пользователя, если запрос аутентифицирован
     /// и он содержит корректный userId в claims.
-    /// userId считается корректным, если он имеет тип int и занчение больше 0.
+    /// userId считается корректным, если он имеет тип Guid и не равен Guid.Empty.
     /// </summary>
-    int RequiredUserId { get; }
+    Guid RequiredUserId { get; }
 
     /// <summary>
     /// Идентификатор текущего пользователя, если запрос аутентифицирован

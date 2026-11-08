@@ -27,9 +27,10 @@ namespace FinaccApi.Tests.Modules.Counterparties.Application;
 [TestClass]
 public sealed class CounterpartyHandlerTests
 {
-	private const int OrganizationId = 7;
-	private const int CreatorId = 22;
-	private const int CurrentUserId = 11;
+	private static readonly Guid OrganizationId = Guid.Parse("00000000-0000-7000-8000-000000000007");
+	private static readonly Guid ForeignOrganizationId = Guid.Parse("00000000-0000-7000-8000-000000000008");
+	private static readonly Guid CreatorId = Guid.Parse("00000000-0000-7000-8000-000000000022");
+	private static readonly Guid CurrentUserId = Guid.Parse("00000000-0000-7000-8000-000000000011");
 	private ICurrentUser _currentUser = null!;
 	private ICurrentOrganization _currentOrganization = null!;
 	private IPermissionChecker _permissionChecker = null!;
@@ -45,8 +46,8 @@ public sealed class CounterpartyHandlerTests
 		_currentUser.UserId.Returns(CurrentUserId);
 		_currentUser.IsAuthenticated.Returns(true);
 		_currentOrganization = Substitute.For<ICurrentOrganization>();
-		_currentOrganization.OrganizationId.Returns((int?)OrganizationId);
-		_currentOrganization.MembershipId.Returns((int?)70);
+		_currentOrganization.OrganizationId.Returns((Guid?)OrganizationId);
+		_currentOrganization.MembershipId.Returns((Guid?)Guid.Parse("00000000-0000-7000-8000-000000000070"));
 
 		var contextLoaded = false;
 		_currentOrganization.LoadContext(Arg.Any<CancellationToken>()).Returns(call =>
@@ -75,7 +76,7 @@ public sealed class CounterpartyHandlerTests
 		var result = await CreateHandler(context).Handle(ValidCreateCommand(), CancellationToken.None);
 
 		Assert.IsTrue(result.IsSuccess);
-		Assert.IsTrue(result.Value.Id > 0);
+		Assert.AreNotEqual(Guid.Empty, result.Value.Id);
 		Assert.AreEqual(OrganizationId, result.Value.OrganizationId);
 		Assert.AreEqual("Original", result.Value.Name);
 		Assert.AreEqual(CounterpartyType.LegalEntity, result.Value.Type);
@@ -177,7 +178,7 @@ public sealed class CounterpartyHandlerTests
 	{
 		await using var context = CreateContext();
 		var counterparty = await AddCounterparty(context);
-		_currentOrganization.OrganizationId.Returns((int?)null);
+		_currentOrganization.OrganizationId.Returns((Guid?)null);
 
 		var result = await InvokeOperation(operation, context, counterparty.Id);
 
@@ -222,7 +223,7 @@ public sealed class CounterpartyHandlerTests
 	{
 		await using var context = CreateContext();
 		var counterparty = await AddCounterparty(context);
-		var membership = new OrganizationMember(CurrentUserId, OrganizationId, 1, membershipStatus);
+		var membership = new OrganizationMember(CurrentUserId, OrganizationId, Guid.CreateVersion7(), membershipStatus);
 		membership.MarkCreated(CreatorId);
 		context.OrganizationMembers.Add(membership);
 		await context.SaveChangesAsync();
@@ -249,13 +250,14 @@ public sealed class CounterpartyHandlerTests
 		var alphaFirst = await AddCounterparty(context, name: "Alpha");
 		var alphaSecond = await AddCounterparty(context, name: "Alpha");
 		await AddCounterparty(context, name: "Archived", archived: true);
-		await AddCounterparty(context, organizationId: OrganizationId + 1, name: "Foreign");
+		await AddCounterparty(context, organizationId: ForeignOrganizationId, name: "Foreign");
 		context.ChangeTracker.Clear();
 
 		var result = await ListHandler(context).Handle(new(), CancellationToken.None);
 
 		Assert.IsTrue(result.IsSuccess);
-		CollectionAssert.AreEqual(new[] { alphaFirst.Id, alphaSecond.Id, beta.Id }, result.Value.Select(x => x.Id).ToArray());
+		var expectedIds = new[] { alphaFirst, alphaSecond, beta }.OrderBy(x => x.Name).ThenBy(x => x.Id).Select(x => x.Id).ToArray();
+		CollectionAssert.AreEqual(expectedIds, result.Value.Select(x => x.Id).ToArray());
 		Assert.IsTrue(result.Value.All(x => x.OrganizationId == OrganizationId && !x.IsArchived));
 		Assert.AreEqual(0, context.ChangeTracker.Entries<Counterparty>().Count());
 		await _permissionChecker.Received(1).HasPermission(Permissions.Counterparties.View, CancellationToken.None);
@@ -270,7 +272,7 @@ public sealed class CounterpartyHandlerTests
 		await using var context = CreateContext();
 		var active = await AddCounterparty(context);
 		var archived = await AddCounterparty(context, archived: true);
-		await AddCounterparty(context, organizationId: OrganizationId + 1, archived: true);
+		await AddCounterparty(context, organizationId: ForeignOrganizationId, archived: true);
 
 		var result = await ListHandler(context).Handle(new(IncludeArchived: true), CancellationToken.None);
 
@@ -289,7 +291,7 @@ public sealed class CounterpartyHandlerTests
 		var individual = await AddCounterparty(context, type: CounterpartyType.Individual);
 		await AddCounterparty(context, type: CounterpartyType.LegalEntity);
 		await AddCounterparty(context, type: null);
-		await AddCounterparty(context, organizationId: OrganizationId + 1, type: CounterpartyType.Individual);
+		await AddCounterparty(context, organizationId: ForeignOrganizationId, type: CounterpartyType.Individual);
 
 		var result = await ListHandler(context).Handle(new(Type: CounterpartyType.Individual), CancellationToken.None);
 
@@ -349,13 +351,13 @@ public sealed class CounterpartyHandlerTests
 	public async Task Handle_WhenRecordIsForeignOrMissing_ReturnsNotFound(int operation, bool missing)
 	{
 		await using var context = CreateContext();
-		var foreign = await AddCounterparty(context, organizationId: OrganizationId + 1);
+		var foreign = await AddCounterparty(context, organizationId: ForeignOrganizationId);
 
-		var result = await InvokeOperation(operation, context, missing ? foreign.Id + 100 : foreign.Id);
+		var result = await InvokeOperation(operation, context, missing ? Guid.CreateVersion7() : foreign.Id);
 
 		Assert.IsTrue(result.IsFailure);
 		Assert.AreEqual(CounterpartyErrors.NotFound, result.Error);
-		await AssertOriginalRecord(context, OrganizationId + 1);
+		await AssertOriginalRecord(context, ForeignOrganizationId);
 	}
 
 	/// <summary>
@@ -467,17 +469,14 @@ public sealed class CounterpartyHandlerTests
 	/// Проверяет валидацию маршрутного ID до доступа к контрагенту.
 	/// </summary>
 	[TestMethod]
-	[DataRow(2, 0)]
-	[DataRow(2, -1)]
-	[DataRow(3, 0)]
-	[DataRow(3, -1)]
-	[DataRow(4, 0)]
-	[DataRow(4, -1)]
-	public async Task Handle_WhenRouteIdIsNotPositive_ReturnsValidation(int operation, int id)
+	[DataRow(2)]
+	[DataRow(3)]
+	[DataRow(4)]
+	public async Task Handle_WhenRouteIdIsEmpty_ReturnsValidation(int operation)
 	{
 		await using var context = CreateContext();
 
-		var result = await InvokeOperation(operation, context, id);
+		var result = await InvokeOperation(operation, context, Guid.Empty);
 
 		AssertValidation(result);
 		Assert.AreEqual(0, await context.Counterparties.CountAsync());
@@ -576,7 +575,7 @@ public sealed class CounterpartyHandlerTests
 		=> new(context, _currentOrganization, _permissionChecker);
 
 	private async Task<Result> InvokeOperation(
-		int operation, ApplicationDbContext context, int id,
+		int operation, ApplicationDbContext context, Guid id,
 		ICurrentOrganization? organization = null, IPermissionChecker? permissionChecker = null)
 	{
 		organization ??= _currentOrganization;
@@ -619,10 +618,10 @@ public sealed class CounterpartyHandlerTests
 	}
 
 	private static async Task<Counterparty> AddCounterparty(
-		ApplicationDbContext context, int organizationId = OrganizationId, string name = "Original",
+		ApplicationDbContext context, Guid? organizationId = null, string name = "Original",
 		CounterpartyType? type = CounterpartyType.LegalEntity, bool archived = false)
 	{
-		var counterparty = new Counterparty(organizationId, name, type, "Поставщик", "+7 900 123-45-67", "contact@example.com");
+		var counterparty = new Counterparty(organizationId ?? OrganizationId, name, type, "Поставщик", "+7 900 123-45-67", "contact@example.com");
 		counterparty.MarkCreated(CreatorId);
 		if (archived)
 			counterparty.Archive();
@@ -631,11 +630,11 @@ public sealed class CounterpartyHandlerTests
 		return counterparty;
 	}
 
-	private static async Task<Counterparty> AssertOriginalRecord(ApplicationDbContext context, int organizationId = OrganizationId, bool archived = false)
+	private static async Task<Counterparty> AssertOriginalRecord(ApplicationDbContext context, Guid? organizationId = null, bool archived = false)
 	{
 		context.ChangeTracker.Clear();
 		var saved = await context.Counterparties.SingleAsync();
-		Assert.AreEqual(organizationId, saved.OrganizationId);
+		Assert.AreEqual(organizationId ?? OrganizationId, saved.OrganizationId);
 		Assert.AreEqual("Original", saved.Name);
 		Assert.AreEqual(CounterpartyType.LegalEntity, saved.Type);
 		Assert.AreEqual("Поставщик", saved.Category);

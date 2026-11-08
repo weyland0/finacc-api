@@ -90,9 +90,9 @@ public class CategoriesController
 	/// <param name="request"> Запрос обновления категории. </param>
 	/// <param name="cancellationToken"> Токен отмены операции. </param>
 	/// <returns> Обновленную категорию. </returns>
-	[HttpPut("{categoryId:int}")]
+	[HttpPut("{categoryId:guid}")]
 	public async Task<IActionResult> Update(
-		[FromRoute] int categoryId,
+		[FromRoute] Guid categoryId,
 		[FromBody] UpdateCategoryRequest request,
 		CancellationToken cancellationToken = default)
 	{
@@ -144,9 +144,9 @@ public class CategoriesController
 	/// <param name="categoryId"> Идентификатор категории. </param>
 	/// <param name="cancellationToken"> Токен отмены операции. </param>
 	/// <returns> Конкретную категорию. </returns>
-	[HttpGet("{categoryId:int}")]
+	[HttpGet("{categoryId:guid}")]
 	public async Task<IActionResult> GetById(
-		[FromRoute] int categoryId,
+		[FromRoute] Guid categoryId,
 		CancellationToken cancellationToken = default)
 	{
 		var query = new GetCategoryByIdQuery(categoryId);

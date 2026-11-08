@@ -12,7 +12,7 @@ namespace FinaccApi.Modules.Counterparties.Application.UpdateCounterparty;
 /// <param name="Phone">Номер телефона.</param>
 /// <param name="Email">Адрес электронной почты.</param>
 public sealed record UpdateCounterpartyCommand(
-	int CounterpartyId,
+	Guid CounterpartyId,
 	string Name,
 	CounterpartyType? Type,
 	string? Category,

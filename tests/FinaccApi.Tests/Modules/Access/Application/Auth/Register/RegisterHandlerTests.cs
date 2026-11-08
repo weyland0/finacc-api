@@ -99,17 +99,17 @@ public sealed class RegisterHandlerTests
 
     private sealed class FakeJwtTokenService : IJwtTokenService
     {
-        public string GenerateAccessToken(int userId, string email)
+        public string GenerateAccessToken(Guid userId, string email)
         {
             return $"access-token:{userId}:{email}";
         }
 
-        public string GenerateRefreshToken(int userId, string email)
+        public string GenerateRefreshToken(Guid userId, string email)
         {
             return $"refresh-token:{userId}:{email}";
         }
 
-        public int? ValidateRefreshToken(string refreshToken)
+        public Guid? ValidateRefreshToken(string refreshToken)
         {
             return null;
         }

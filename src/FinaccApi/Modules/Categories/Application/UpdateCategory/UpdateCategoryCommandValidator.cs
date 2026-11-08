@@ -14,7 +14,7 @@ public sealed class UpdateCategoryCommandValidator : AbstractValidator<UpdateCat
 	public UpdateCategoryCommandValidator()
 	{
 		RuleFor(x => x.CategoryId)
-			.GreaterThan(0);
+			.NotEmpty();
 
 		RuleFor(x => x.Name)
 			.NotEmpty()

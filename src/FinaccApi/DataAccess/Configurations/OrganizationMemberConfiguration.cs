@@ -17,6 +17,8 @@ public sealed class OrganizationMemberConfiguration : IEntityTypeConfiguration<O
 
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.Id).ValueGeneratedNever();
+
         AuditableEntityConfigurationExtension.ConfigureAuditableEntity(builder);
 
         builder.HasOne<User>()

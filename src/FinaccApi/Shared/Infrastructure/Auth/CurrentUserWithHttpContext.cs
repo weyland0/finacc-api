@@ -11,7 +11,7 @@ public class CurrentUserWithHttpContext : ICurrentUser
     /// <summary>
     /// Идентификатор текущего пользователя, если запрос аутентифицирован.
     /// </summary>
-    public int? UserId { get => ParseUserIdFromClaims(); }
+    public Guid? UserId { get => ParseUserIdFromClaims(); }
 
     /// <summary>
     /// Электронная почта текущего пользователя, если запрос аутентифицирован.
@@ -26,9 +26,9 @@ public class CurrentUserWithHttpContext : ICurrentUser
     /// <summary>
     /// Идентификатор текущего пользователя, если запрос аутентифицирован
     /// и он содержит корректный userId в claims.
-    /// userId считается корректным, если он имеет тип int и занчение больше 0.
+    /// userId считается корректным, если он имеет тип Guid и не равен Guid.Empty.
     /// </summary>
-    public int RequiredUserId =>
+    public Guid RequiredUserId =>
         UserId ?? throw new InvalidOperationException("Authenticated user id claim is missing or invalid.");
 
     /// <summary>
@@ -57,7 +57,7 @@ public class CurrentUserWithHttpContext : ICurrentUser
     /// Извлекает идентификатор пользователя из claims текущего запроса.
     /// </summary>
     /// <returns>Идентификатор пользователя, если он найден и успешно преобразован; иначе null.</returns>
-    private int? ParseUserIdFromClaims()
+    private Guid? ParseUserIdFromClaims()
     {
         var user = _httpContextAccessor.HttpContext?.User;
 
@@ -69,7 +69,7 @@ public class CurrentUserWithHttpContext : ICurrentUser
         var userIdClaim = user.FindFirst("userId")?.Value
             ?? user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        return int.TryParse(userIdClaim, out var userId)
+        return Guid.TryParse(userIdClaim, out var userId) && userId != Guid.Empty
             ? userId : null;
     }
 

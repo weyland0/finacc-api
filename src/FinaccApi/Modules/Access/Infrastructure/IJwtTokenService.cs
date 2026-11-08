@@ -11,7 +11,7 @@ public interface IJwtTokenService
     /// <param name="userId">Идентификатор пользователя.</param>
     /// <param name="email">Электронная почта пользователя.</param>
     /// <returns>JWT access token.</returns>
-    string GenerateAccessToken(int userId, string email);
+    string GenerateAccessToken(Guid userId, string email);
 
     /// <summary>
     /// Генерирует refresh token для получения нового access token.
@@ -19,12 +19,12 @@ public interface IJwtTokenService
     /// <param name="userId">Идентификатор пользователя.</param>
     /// <param name="email">Электронная почта пользователя.</param>
     /// <returns>JWT refresh token.</returns>
-    string GenerateRefreshToken(int userId, string email);
+    string GenerateRefreshToken(Guid userId, string email);
 
     /// <summary>
     /// Проверяет refresh token и возвращает идентификатор пользователя.
     /// </summary>
     /// <param name="refreshToken">Refresh token, полученный от клиента.</param>
     /// <returns>Идентификатор пользователя, если токен действителен; иначе null.</returns>
-    int? ValidateRefreshToken(string refreshToken);
+    Guid? ValidateRefreshToken(string refreshToken);
 }

@@ -7,7 +7,7 @@ namespace FinaccApi.Modules.Categories.Application.UpdateCategory;
 /// <param name="Name"> Название. </param>
 /// <param name="Description"> Описание категории. </param>
 public record UpdateCategoryCommand(
-	int CategoryId,
+	Guid CategoryId,
 	string Name,
 	string? Description
 );

@@ -10,17 +10,17 @@ public class OrganizationMember : AuditableEntity, IOrganizationOwnedEntity
     /// <summary>
     /// Идентификатор пользователя, которому принадлежит членство.
     /// </summary>
-    public int UserId { get; private set; }
+    public Guid UserId { get; private set; }
 
     /// <summary>
     /// Идентификатор организации, в которой состоит пользователь.
     /// </summary>
-    public int OrganizationId { get; private set; }
+    public Guid OrganizationId { get; private set; }
 
     /// <summary>
     /// Идентификатор роли пользователя в организации.
     /// </summary>
-    public int RoleId { get; private set; }
+    public Guid RoleId { get; private set; }
 
     /// <summary>
     /// Код текущего статуса участника организации.
@@ -34,7 +34,7 @@ public class OrganizationMember : AuditableEntity, IOrganizationOwnedEntity
     /// <param name="userId">Идентификатор пользователя.</param>
     /// <param name="organizationId">Идентификатор организации.</param>
     /// <param name="roleId">Идентификатор роли пользователя в организации.</param>
-    public OrganizationMember(int userId, int organizationId, int roleId)
+    public OrganizationMember(Guid userId, Guid organizationId, Guid roleId)
     {
         UserId = userId;
         OrganizationId = organizationId;
@@ -49,7 +49,7 @@ public class OrganizationMember : AuditableEntity, IOrganizationOwnedEntity
     /// <param name="organizationId">Идентификатор организации.</param>
     /// <param name="roleId">Идентификатор роли пользователя в организации.</param>
     /// <param name="status">Код статуса участника организации.</param>
-    public OrganizationMember(int userId, int organizationId, int roleId, string status)
+    public OrganizationMember(Guid userId, Guid organizationId, Guid roleId, string status)
     {
         UserId = userId;
         OrganizationId = organizationId;

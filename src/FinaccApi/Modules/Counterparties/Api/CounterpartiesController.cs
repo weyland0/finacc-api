@@ -98,9 +98,9 @@ public sealed class CounterpartiesController : ControllerBase
 	/// <param name="id">Идентификатор контрагента.</param>
 	/// <param name="cancellationToken">Токен отмены операции.</param>
 	/// <returns>Контрагент или ошибка.</returns>
-	[HttpGet("{id:int}")]
+	[HttpGet("{id:guid}")]
 	public async Task<IActionResult> GetById(
-		[FromRoute] int id,
+		[FromRoute] Guid id,
 		CancellationToken cancellationToken = default)
 	{
 		var result = await _getByIdHandler.Handle(
@@ -115,9 +115,9 @@ public sealed class CounterpartiesController : ControllerBase
 	/// <param name="request">Новые данные, включая null для очистки необязательных полей.</param>
 	/// <param name="cancellationToken">Токен отмены операции.</param>
 	/// <returns>Обновленный контрагент или ошибка.</returns>
-	[HttpPut("{id:int}")]
+	[HttpPut("{id:guid}")]
 	public async Task<IActionResult> Update(
-		[FromRoute] int id,
+		[FromRoute] Guid id,
 		[FromBody] UpdateCounterpartyRequest request,
 		CancellationToken cancellationToken = default)
 	{
@@ -134,9 +134,9 @@ public sealed class CounterpartiesController : ControllerBase
 	/// <param name="id">Идентификатор контрагента.</param>
 	/// <param name="cancellationToken">Токен отмены операции.</param>
 	/// <returns>Результат архивирования.</returns>
-	[HttpPatch("{id:int}/archive")]
+	[HttpPatch("{id:guid}/archive")]
 	public async Task<IActionResult> Archive(
-		[FromRoute] int id,
+		[FromRoute] Guid id,
 		CancellationToken cancellationToken = default)
 	{
 		var result = await _archiveHandler.Handle(

@@ -31,10 +31,10 @@ public class JwtTokenService : IJwtTokenService
     /// <exception cref="ArgumentException">
     /// Выбрасывается, если идентификатор пользователя некорректен или email пустой.
     /// </exception>
-    private string GetToken(int userId, string email, DateTime expiresAt)
+    private string GetToken(Guid userId, string email, DateTime expiresAt)
     {
-        if (userId <= 0)
-            throw new ArgumentException("User ID must be a positive integer!", nameof(userId));
+        if (userId == Guid.Empty)
+            throw new ArgumentException("User ID must not be empty!", nameof(userId));
 
         if (string.IsNullOrWhiteSpace(email))
             throw new ArgumentException("Email must not be empty!", nameof(email));
@@ -76,7 +76,7 @@ public class JwtTokenService : IJwtTokenService
     /// <param name="userId">Идентификатор пользователя.</param>
     /// <param name="email">Электронная почта пользователя.</param>
     /// <returns>JWT access token.</returns>
-    public string GenerateAccessToken(int userId, string email)
+    public string GenerateAccessToken(Guid userId, string email)
     {
         return GetToken(userId, email, DateTime.UtcNow.AddMinutes(15));
     }
@@ -87,7 +87,7 @@ public class JwtTokenService : IJwtTokenService
     /// <param name="userId">Идентификатор пользователя.</param>
     /// <param name="email">Электронная почта пользователя.</param>
     /// <returns>JWT refresh token.</returns>
-    public string GenerateRefreshToken(int userId, string email)
+    public string GenerateRefreshToken(Guid userId, string email)
     {
         return GetToken(userId, email, DateTime.UtcNow.AddDays(7));
     }
@@ -97,7 +97,7 @@ public class JwtTokenService : IJwtTokenService
     /// </summary>
     /// <param name="refreshToken">Refresh token, полученный от клиента.</param>
     /// <returns>Идентификатор пользователя, если токен действителен; иначе null.</returns>
-    public int? ValidateRefreshToken(string refreshToken)
+    public Guid? ValidateRefreshToken(string refreshToken)
     {
         try
         {
@@ -124,7 +124,7 @@ public class JwtTokenService : IJwtTokenService
             
             // Извлекаем идентификатор пользователя из claims.
             var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
+            if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var userId) && userId != Guid.Empty)
             {
                 return userId;
             }

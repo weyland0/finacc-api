@@ -14,12 +14,12 @@ namespace FinaccApi.Modules.Categories.Application;
 /// <param name="ParentCategoryId"> Идентификатор родительской категории. </param>
 /// <param name="Children"> Дочерние категории. </param>
 public record CategoryListItemResponse(
-	int Id,
+	Guid Id,
 	string Name,
 	CategoryType CategoryType,
 	ActivityType ActivityType,
 	string? Description,
-	int? OrganizationId,
-	int? ParentCategoryId,
+	Guid? OrganizationId,
+	Guid? ParentCategoryId,
 	IReadOnlyList<CategoryListItemResponse> Children
 );

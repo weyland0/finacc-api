@@ -4,4 +4,4 @@ namespace FinaccApi.Modules.Counterparties.Application.ArchiveCounterparty;
 /// Команда архивирования контрагента.
 /// </summary>
 /// <param name="CounterpartyId">Идентификатор контрагента.</param>
-public sealed record ArchiveCounterpartyCommand(int CounterpartyId);
+public sealed record ArchiveCounterpartyCommand(Guid CounterpartyId);

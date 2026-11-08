@@ -8,7 +8,7 @@ public class RolePermission
     /// <summary>
     /// Идентификатор роли, которой назначено разрешение.
     /// </summary>
-    public int RoleId { get; private set; }
+    public Guid RoleId { get; private set; }
 
     /// <summary>
     /// Роль, которой назначено разрешение.
@@ -18,7 +18,7 @@ public class RolePermission
     /// <summary>
     /// Идентификатор разрешения, назначенного роли.
     /// </summary>
-    public int PermissionId { get; private set; }
+    public Guid PermissionId { get; private set; }
 
     /// <summary>
     /// Разрешение, назначенное роли.

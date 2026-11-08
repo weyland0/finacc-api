@@ -18,19 +18,19 @@ public abstract class AuditableEntity : Entity
     /// <summary>
     /// Идентификатор пользователя, создавшего сущность, если он известен.
     /// </summary>
-    public int? CreatedBy { get; protected set; }
+    public Guid? CreatedBy { get; protected set; }
 
     /// <summary>
     /// Идентификатор пользователя, последним обновившего сущность, если он известен.
     /// </summary>
-    public int? UpdatedBy { get; protected set; }
+    public Guid? UpdatedBy { get; protected set; }
 
 
     /// <summary>
     /// Заполняет поля аудита при создании сущности.
     /// </summary>
     /// <param name="userId">Идентификатор пользователя, создавшего сущность, или null для системного действия.</param>
-    public void MarkCreated(int? userId)
+    public void MarkCreated(Guid? userId)
     {
         CreatedBy = userId;
         UpdatedBy = userId;
@@ -42,7 +42,7 @@ public abstract class AuditableEntity : Entity
     /// Обновляет поля аудита при изменении сущности.
     /// </summary>
     /// <param name="userId">Идентификатор пользователя, обновившего сущность, или null для системного действия.</param>
-    public void MarkUpdated(int? userId)
+    public void MarkUpdated(Guid? userId)
     {
         UpdatedBy = userId;
         UpdatedAt = DateTime.UtcNow;

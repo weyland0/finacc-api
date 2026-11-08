@@ -14,8 +14,8 @@ namespace FinaccApi.Modules.Counterparties.Application;
 /// <param name="Email">Адрес электронной почты.</param>
 /// <param name="IsArchived">Признак архивирования.</param>
 public sealed record CounterpartyDetailsResponse(
-	int Id,
-	int OrganizationId,
+	Guid Id,
+	Guid OrganizationId,
 	string Name,
 	CounterpartyType? Type,
 	string? Category,

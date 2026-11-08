@@ -8,5 +8,5 @@ public interface IOrganizationOwnedEntity
     /// <summary>
     /// Идентификатор организации, которой принадлежит сущность.
     /// </summary>
-    int OrganizationId { get; }
+    Guid OrganizationId { get; }
 }

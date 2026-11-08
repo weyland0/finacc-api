@@ -12,6 +12,6 @@ public sealed class ArchiveCounterpartyCommandValidator : AbstractValidator<Arch
 	/// </summary>
 	public ArchiveCounterpartyCommandValidator()
 	{
-		RuleFor(x => x.CounterpartyId).GreaterThan(0);
+		RuleFor(x => x.CounterpartyId).NotEmpty();
 	}
 }

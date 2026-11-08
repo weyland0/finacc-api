@@ -30,12 +30,12 @@ public class Category : AuditableEntity
 	/// <summary>
 	/// Организация-владелец категории.
 	/// </summary>
-	public int? OrganizationId { get; private set; }
+	public Guid? OrganizationId { get; private set; }
 
 	/// <summary>
 	/// Идентификатор родительской категории.
 	/// </summary>
-	public int? ParentId { get; private set; }
+	public Guid? ParentId { get; private set; }
 
 	/// <summary>
 	/// Инициализирует категорию c основными данными.
@@ -57,8 +57,8 @@ public class Category : AuditableEntity
 		CategoryType categoryType,
 		ActivityType activityType,
 		string? description,
-		int? organizationId,
-		int? parentId)
+		Guid? organizationId,
+		Guid? parentId)
 		: this(name, categoryType, activityType)
 	{
 		Description = description;

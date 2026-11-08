@@ -13,7 +13,7 @@ public sealed class UpdateCounterpartyCommandValidator : AbstractValidator<Updat
 	/// </summary>
 	public UpdateCounterpartyCommandValidator()
 	{
-		RuleFor(x => x.CounterpartyId).GreaterThan(0);
+		RuleFor(x => x.CounterpartyId).NotEmpty();
 
 		RuleFor(x => x.Name)
 			.NotEmpty()

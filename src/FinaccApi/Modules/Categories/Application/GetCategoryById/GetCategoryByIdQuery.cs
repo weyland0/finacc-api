@@ -4,4 +4,4 @@ namespace FinaccApi.Modules.Categories.Application.GetCategoryById;
 /// Запрос получения категории по идентификатору.
 /// </summary>
 /// <param name="CategoryId"> Идентификатор категории. </param>
-public record GetCategoryByIdQuery(int CategoryId);
+public record GetCategoryByIdQuery(Guid CategoryId);

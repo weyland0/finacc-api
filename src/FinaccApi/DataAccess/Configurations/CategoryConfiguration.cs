@@ -27,7 +27,7 @@ public sealed class CategoryConfiguration : IEntityTypeConfiguration<Category>
 		builder.HasKey(x => x.Id);
 
 		builder.Property(x => x.Id)
-			.ValueGeneratedOnAdd()
+			.ValueGeneratedNever()
 			.IsRequired();
 
 		builder.Property(x => x.Name)

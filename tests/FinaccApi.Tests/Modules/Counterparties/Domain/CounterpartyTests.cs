@@ -9,16 +9,16 @@ namespace FinaccApi.Tests.Modules.Counterparties.Domain;
 [TestClass]
 public sealed class CounterpartyTests
 {
+	private static readonly Guid OrganizationId = Guid.Parse("00000000-0000-7000-8000-000000000007");
+	private static readonly Guid CurrentUserId = Guid.Parse("00000000-0000-7000-8000-000000000011");
 	/// <summary>
-	/// Проверяет обязательный положительный идентификатор организации.
+	/// Проверяет обязательный непустой идентификатор организации.
 	/// </summary>
 	[TestMethod]
-	[DataRow(0)]
-	[DataRow(-1)]
-	public void Constructor_WhenOrganizationIdIsNotPositive_Throws(int organizationId)
+	public void Constructor_WhenOrganizationIdIsEmpty_Throws()
 	{
 		Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
-			new Counterparty(organizationId, "Контрагент", null, null, null, null));
+			new Counterparty(Guid.Empty, "Контрагент", null, null, null, null));
 	}
 
 	/// <summary>
@@ -27,7 +27,7 @@ public sealed class CounterpartyTests
 	[TestMethod]
 	public void Constructor_WhenNameIsNull_Throws()
 	{
-		Assert.ThrowsException<ArgumentNullException>(() => new Counterparty(7, null!, null, null, null, null));
+		Assert.ThrowsException<ArgumentNullException>(() => new Counterparty(OrganizationId, null!, null, null, null, null));
 	}
 
 	/// <summary>
@@ -38,8 +38,8 @@ public sealed class CounterpartyTests
 	[DataRow(" \t\r\n ")]
 	public void ConstructorAndUpdate_WhenNameIsWhitespace_ThrowWithoutChangingDetails(string name)
 	{
-		Assert.ThrowsException<ArgumentException>(() => new Counterparty(7, name, null, null, null, null));
-		var counterparty = new Counterparty(7, "Исходное имя", CounterpartyType.Individual, "Партнёр", "123", "old@example.com");
+		Assert.ThrowsException<ArgumentException>(() => new Counterparty(OrganizationId, name, null, null, null, null));
+		var counterparty = new Counterparty(OrganizationId, "Исходное имя", CounterpartyType.Individual, "Партнёр", "123", "old@example.com");
 
 		Assert.ThrowsException<ArgumentException>(() => counterparty.UpdateDetails(name, null, null, null, null));
 
@@ -56,12 +56,12 @@ public sealed class CounterpartyTests
 	[TestMethod]
 	public void UpdateDetails_WhenOptionalFieldsAreNull_ClearsDetailsAndPreservesOrganization()
 	{
-		var counterparty = new Counterparty(7, "Исходное имя", CounterpartyType.Individual, "Партнёр", "123", "old@example.com");
+		var counterparty = new Counterparty(OrganizationId, "Исходное имя", CounterpartyType.Individual, "Партнёр", "123", "old@example.com");
 
 		counterparty.UpdateDetails("Новое имя", null, null, null, null);
 
 		Assert.IsInstanceOfType<IOrganizationOwnedEntity>(counterparty);
-		Assert.AreEqual(7, counterparty.OrganizationId);
+		Assert.AreEqual(OrganizationId, counterparty.OrganizationId);
 		Assert.AreEqual("Новое имя", counterparty.Name);
 		Assert.IsNull(counterparty.Type);
 		Assert.IsNull(counterparty.Category);
@@ -75,8 +75,8 @@ public sealed class CounterpartyTests
 	[TestMethod]
 	public void Archive_WhenCalledRepeatedly_PreservesDataAndPreventsUpdates()
 	{
-		var counterparty = new Counterparty(7, "Исходное имя", CounterpartyType.Individual, "Партнёр", "123", "old@example.com");
-		counterparty.MarkCreated(11);
+		var counterparty = new Counterparty(OrganizationId, "Исходное имя", CounterpartyType.Individual, "Партнёр", "123", "old@example.com");
+		counterparty.MarkCreated(CurrentUserId);
 		var updatedAt = counterparty.UpdatedAt;
 
 		counterparty.Archive();
@@ -84,13 +84,13 @@ public sealed class CounterpartyTests
 
 		Assert.ThrowsException<InvalidOperationException>(() => counterparty.UpdateDetails("Новое имя", null, null, null, null));
 		Assert.IsTrue(counterparty.IsArchived);
-		Assert.AreEqual(7, counterparty.OrganizationId);
+		Assert.AreEqual(OrganizationId, counterparty.OrganizationId);
 		Assert.AreEqual("Исходное имя", counterparty.Name);
 		Assert.AreEqual(CounterpartyType.Individual, counterparty.Type);
 		Assert.AreEqual("Партнёр", counterparty.Category);
 		Assert.AreEqual("123", counterparty.Phone);
 		Assert.AreEqual("old@example.com", counterparty.Email);
-		Assert.AreEqual(11, counterparty.UpdatedBy);
+		Assert.AreEqual(CurrentUserId, counterparty.UpdatedBy);
 		Assert.AreEqual(updatedAt, counterparty.UpdatedAt);
 	}
 }

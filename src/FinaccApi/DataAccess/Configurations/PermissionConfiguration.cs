@@ -15,6 +15,8 @@ public sealed class PermissionConfiguration : IEntityTypeConfiguration<Permissio
 
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.Id).ValueGeneratedNever();
+
         builder.Property(x => x.Code)
             .HasMaxLength(200)
             .IsRequired();

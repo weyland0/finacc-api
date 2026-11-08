@@ -188,7 +188,7 @@ public class Program
 					{
 						var userIdClaim = context.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-						if (!int.TryParse(userIdClaim, out var userId) || userId <= 0)
+						if (!Guid.TryParse(userIdClaim, out var userId) || userId == Guid.Empty)
 						{
 							context.Fail("Token does not contain a valid user id.");
 						}

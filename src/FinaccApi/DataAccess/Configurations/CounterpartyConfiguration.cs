@@ -20,7 +20,7 @@ public sealed class CounterpartyConfiguration : IEntityTypeConfiguration<Counter
 		builder.ToTable(CounterpartyConstraints.TableName);
 
 		builder.HasKey(x => x.Id);
-		builder.Property(x => x.Id).ValueGeneratedOnAdd().IsRequired();
+		builder.Property(x => x.Id).ValueGeneratedNever().IsRequired();
 
 		builder.Property(x => x.OrganizationId).IsRequired();
 

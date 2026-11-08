@@ -99,7 +99,7 @@ public sealed class GetCategoriesHandler
 	/// <returns> Запрос в БД на получение категорий. </returns>
 	private IQueryable<Category> BuildQuery(
 		GetCategoriesQuery request,
-		int organizationId)
+		Guid organizationId)
 	{
 		IQueryable<Category> query = _dbContext.Categories
 			.AsNoTracking()
@@ -156,7 +156,7 @@ public sealed class GetCategoriesHandler
 	private static IQueryable<Category> ApplyScopeFilter(
 		IQueryable<Category> query,
 		CategorySearchScope scope,
-		int organizationId)
+		Guid organizationId)
 	{
 		return scope switch
 		{

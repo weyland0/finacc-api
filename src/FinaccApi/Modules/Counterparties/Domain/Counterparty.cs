@@ -10,7 +10,7 @@ public sealed class Counterparty : AuditableEntity, IOrganizationOwnedEntity
 	/// <summary>
 	/// Идентификатор организации.
 	/// </summary>
-	public int OrganizationId { get; private set; }
+	public Guid OrganizationId { get; private set; }
 
 	/// <summary>
 	/// Название или ФИО контрагента.
@@ -56,14 +56,17 @@ public sealed class Counterparty : AuditableEntity, IOrganizationOwnedEntity
 	/// <param name="phone">Номер телефона.</param>
 	/// <param name="email">Адрес электронной почты.</param>
 	public Counterparty(
-		int organizationId,
+		Guid organizationId,
 		string name,
 		CounterpartyType? type,
 		string? category,
 		string? phone,
 		string? email)
 	{
-		ArgumentOutOfRangeException.ThrowIfNegativeOrZero(organizationId);
+		if (organizationId == Guid.Empty)
+		{
+			throw new ArgumentOutOfRangeException(nameof(organizationId));
+		}
 		ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
 		OrganizationId = organizationId;

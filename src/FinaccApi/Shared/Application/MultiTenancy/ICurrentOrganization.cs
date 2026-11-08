@@ -8,17 +8,17 @@ public interface ICurrentOrganization
     /// <summary>
     /// Идентификатор активной организации текущего пользователя, если контекст найден.
     /// </summary>
-    int? OrganizationId { get; }
+    Guid? OrganizationId { get; }
 
     /// <summary>
     /// Идентификатор активного членства пользователя в организации, если контекст найден.
     /// </summary>
-    int? MembershipId { get; }
+    Guid? MembershipId { get; }
 
     /// <summary>
     /// Идентификатор роли пользователя в активной организации, если контекст найден.
     /// </summary>
-    int? RoleId { get; }
+    Guid? RoleId { get; }
 
     /// <summary>
     /// Коды разрешений, связанных с ролью пользователя в активной организации.

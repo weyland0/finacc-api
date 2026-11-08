@@ -40,11 +40,13 @@
 
 ## Миграция и права
 
-Сгенерирована EF Core 9 migration `20261108101223_CreateCounterparties` и обновлён snapshot. Предыдущие миграции сохранены без изменений.
+Текущая схема создаётся начальной UUID-миграцией `20261108114139_InitialCreate`. Все ID и ссылки хранятся как PostgreSQL `uuid`, новые идентификаторы UUID v7 назначаются в приложении до сохранения.
 
 Таблица `counterparties` содержит обязательный FK организации с `ON DELETE RESTRICT`, nullable тип в строковом `varchar(50)`, ограничения длины, `is_archived boolean NOT NULL DEFAULT FALSE` и аудит по общей конфигурации. Есть индекс организации и индексы пользователей аудита; уникального индекса имени нет.
 
-В этой же миграции через `ON CONFLICT DO NOTHING` добавляются четыре разрешения и назначения существующим ролям:
+Начальная миграция создаёт роль `owner`, разрешения реализованных модулей и назначения владельцу. Инструкции по пересозданию тестовой базы и изменениям API находятся в [описании перехода на UUID](guid-migration.md).
+
+После добавления дополнительных ролей можно выполнить [повторно применимый скрипт](sql/register-counterparty-permissions.sql). Он явно передаёт UUID разрешений, находит роли и разрешения по кодам и выдаёт права по следующей схеме:
 
 | Код роли (`RoleCodes`) | Права Counterparties |
 |---|---|
@@ -53,88 +55,10 @@
 | `accountant` | View, Create, Update, Archive |
 | `viewer` | View |
 
-Числовые ID ролей не используются. Другие права и назначения не изменяются. В `Down()` удаляется только таблица контрагентов; записи прав сохраняются, поскольку могли существовать до миграции.
-
-Миграция **не применялась** к пользовательской БД. Для самостоятельного применения из корня репозитория:
-
-```sh
-dotnet ef database update CreateCounterparties --project src/FinaccApi
-```
-
-В исходном проекте нет автоматического создания системных ролей. На пустой БД миграция зарегистрирует permissions, но выдавать их будет некому. Если роли создаются после миграции, повторно выполните [скрипт регистрации](sql/register-counterparty-permissions.sql) в выбранной БД:
-
-```sh
-psql "$FINACC_DATABASE_URL" -v ON_ERROR_STOP=1 -f docs/sql/register-counterparty-permissions.sql
-```
-
-Скрипт повторно применим и не создаёт/не меняет роли.
+Скрипт не создаёт роли и не изменяет остальные назначения.
 
 ## Проверка
 
-Проверено 8 ноября 2026 года:
+Тесты Counterparties покрывают handlers, tenant isolation, доступ, валидацию, аудит, архив, очистку полей, DI, доменные инварианты и метаданные модели. Для идентификаторов используются GUID, пустой ID проверяется через `Guid.Empty`. Общие тесты `UuidIdentityTests` проверяют UUID v7 до сохранения и UUID-типы первичных/внешних ключей.
 
-- Сборка приложения и тестового проекта успешна, предупреждений и ошибок компиляции нет.
-- Полный `dotnet test`: **98 тестов, 97 успешных, 1 неуспешный, 0 пропущенных**.
-- Все **67 новых тестов Counterparties успешны**: сценарии handlers, tenant isolation, доступ, валидация, аудит, архив, очистка полей, DI, доменные инварианты и метаданные модели.
-- Отдельный запуск чистого исходного `HEAD 8297892` через `git archive`: **31 тест, 30 успешных, 1 неуспешный**. Тот же существующий тест `RegisterHandlerTests.Handle_WhenEmailAlreadyExists_ReturnsFailure` падает на строке 61: `RegisterHandler` вычисляет `emailExists`, но не проверяет его. Посторонний код Access не исправлялся.
-- SQL прямой и обратной миграции сгенерирован и проверен. `dotnet ef migrations has-pending-model-changes` подтвердил отсутствие расхождений модели и snapshot.
-- `git diff --check` не обнаружил ошибок пробелов.
-
-Команды проверки:
-
-```sh
-dotnet build FinaccApi.sln --no-restore -m:1 -nodeReuse:false -p:UseSharedCompilation=false
-dotnet test FinaccApi.sln --no-restore -m:1 -nodeReuse:false -p:UseSharedCompilation=false
-dotnet ef migrations has-pending-model-changes --project src/FinaccApi --no-build
-dotnet ef migrations script AddUniqueActiveOrganizationMemberIndex CreateCounterparties --project src/FinaccApi --no-build
-dotnet ef migrations script CreateCounterparties AddUniqueActiveOrganizationMemberIndex --project src/FinaccApi --no-build
-```
-
-Ограничение проверки: живая PostgreSQL не использовалась. InMemory-тесты не доказывают выполнение `ILIKE` и ограничений PostgreSQL; для модели отдельно проверены реляционные метаданные и преобразование nullable enum. Миграции к БД не применялись. Исходная ошибка регистрации мешает полному зелёному прогону существующих тестов.
-
-## Файлы
-
-Созданы:
-
-```text
-src/FinaccApi/Modules/Counterparties/
-  Domain/Counterparty.cs
-  Domain/CounterpartyType.cs
-  Domain/CounterpartyConstraints.cs
-  Application/CounterpartyDetailsResponse.cs
-  Application/CounterpartyErrors.cs
-  Application/CreateCounterparty/CreateCounterpartyCommand.cs
-  Application/CreateCounterparty/CreateCounterpartyCommandValidator.cs
-  Application/CreateCounterparty/CreateCounterpartyHandler.cs
-  Application/GetCounterparties/GetCounterpartiesQuery.cs
-  Application/GetCounterparties/GetCounterpartiesHandler.cs
-  Application/GetCounterpartyById/GetCounterpartyByIdQuery.cs
-  Application/GetCounterpartyById/GetCounterpartyByIdHandler.cs
-  Application/UpdateCounterparty/UpdateCounterpartyCommand.cs
-  Application/UpdateCounterparty/UpdateCounterpartyCommandValidator.cs
-  Application/UpdateCounterparty/UpdateCounterpartyHandler.cs
-  Application/ArchiveCounterparty/ArchiveCounterpartyCommand.cs
-  Application/ArchiveCounterparty/ArchiveCounterpartyCommandValidator.cs
-  Application/ArchiveCounterparty/ArchiveCounterpartyHandler.cs
-  Api/CreateCounterpartyRequest.cs
-  Api/UpdateCounterpartyRequest.cs
-  Api/CounterpartiesController.cs
-  CounterpartiesModule.cs
-src/FinaccApi/DataAccess/Configurations/CounterpartyConfiguration.cs
-src/FinaccApi/DataAccess/Migrations/20261108101223_CreateCounterparties.cs
-src/FinaccApi/DataAccess/Migrations/20261108101223_CreateCounterparties.Designer.cs
-tests/FinaccApi.Tests/Modules/Counterparties/Application/CounterpartyHandlerTests.cs
-tests/FinaccApi.Tests/Modules/Counterparties/Domain/CounterpartyTests.cs
-tests/FinaccApi.Tests/Modules/Counterparties/DataAccess/CounterpartyConfigurationTests.cs
-docs/sql/register-counterparty-permissions.sql
-docs/counterparties.md
-```
-
-Изменены:
-
-```text
-src/FinaccApi/DataAccess/ApplicationDbContext.cs
-src/FinaccApi/DataAccess/Migrations/ApplicationDbContextModelSnapshot.cs
-src/FinaccApi/Modules/Access/Domain/Permissions.cs
-src/FinaccApi/Program.cs
-```
+InMemory-тесты не подтверждают выполнение `ILIKE` и ограничений PostgreSQL; для этого необходима проверка на настоящей БД. Отдельный известный дефект регистрации дублирующего email описан в [заметках о переходе](guid-migration.md).

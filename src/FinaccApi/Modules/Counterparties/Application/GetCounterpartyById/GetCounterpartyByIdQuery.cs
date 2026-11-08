@@ -4,4 +4,4 @@ namespace FinaccApi.Modules.Counterparties.Application.GetCounterpartyById;
 /// Запрос контрагента по идентификатору.
 /// </summary>
 /// <param name="CounterpartyId">Идентификатор контрагента.</param>
-public sealed record GetCounterpartyByIdQuery(int CounterpartyId);
+public sealed record GetCounterpartyByIdQuery(Guid CounterpartyId);

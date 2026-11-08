@@ -60,10 +60,10 @@ public sealed class GetCounterpartyByIdHandler
 			return Result.Failure<CounterpartyDetailsResponse>(CounterpartyErrors.Forbidden);
 		}
 
-		if (query.CounterpartyId <= 0)
+		if (query.CounterpartyId == Guid.Empty)
 		{
 			return Result.Failure<CounterpartyDetailsResponse>(
-				CounterpartyErrors.BuildValidationError("CounterpartyId must be greater than zero."));
+				CounterpartyErrors.BuildValidationError("CounterpartyId must not be empty."));
 		}
 
 		var organizationId = _currentOrganization.OrganizationId!.Value;

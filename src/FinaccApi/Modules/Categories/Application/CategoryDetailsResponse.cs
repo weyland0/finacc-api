@@ -13,13 +13,13 @@ namespace FinaccApi.Modules.Categories.Application;
 /// <param name="OrganizationId"> Идентификатор организации. </param>
 /// <param name="ParentCategoryId"> Идентификатор родительской категории. </param>
 public record CategoryDetailsResponse(
-	int Id,
+	Guid Id,
 	string Name,
 	CategoryType CategoryType,
 	ActivityType ActivityType,
 	string? Description,
-	int? OrganizationId,
-	int? ParentCategoryId)
+	Guid? OrganizationId,
+	Guid? ParentCategoryId)
 {
 	/// <summary>
 	/// Создает ответ получения конкретной категории из <paramref name="category"/>.

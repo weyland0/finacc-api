@@ -15,5 +15,5 @@ public record CreateCategoryRequest(
 	CategoryType CategoryType,
 	ActivityType ActivityType,
 	string? Description,
-	int? ParentCategoryId
+	Guid? ParentCategoryId
 );

@@ -25,17 +25,17 @@ public sealed class UpdateCategoryHandlerTests
 	/// <summary>
 	/// Идентификатор организации текущего пользователя.
 	/// </summary>
-	private const int OrganizationId = 7;
+	private static readonly Guid OrganizationId = new("019383d0-0000-7000-8000-000000000007");
 
 	/// <summary>
 	/// Идентификатор пользователя, создавшего категорию.
 	/// </summary>
-	private const int CreatorId = 22;
+	private static readonly Guid CreatorId = new("019383d0-0000-7000-8000-000000000022");
 
 	/// <summary>
 	/// Идентификатор пользователя, обновляющего категорию.
 	/// </summary>
-	private const int CurrentUserId = 11;
+	private static readonly Guid CurrentUserId = new("019383d0-0000-7000-8000-000000000011");
 
 	/// <summary>
 	/// Контекст текущего пользователя.
@@ -62,7 +62,7 @@ public sealed class UpdateCategoryHandlerTests
 		CurrentUser.RequiredUserId.Returns(CurrentUserId);
 
 		CurrentOrganization = Substitute.For<ICurrentOrganization>();
-		CurrentOrganization.OrganizationId.Returns((int?)OrganizationId);
+		CurrentOrganization.OrganizationId.Returns((Guid?)OrganizationId);
 
 		var organizationContextLoaded = false;
 		CurrentOrganization.LoadContext(Arg.Any<CancellationToken>()).Returns(call =>
@@ -100,7 +100,7 @@ public sealed class UpdateCategoryHandlerTests
 		var controller = ActivatorUtilities.CreateInstance<CategoriesController>(scope.ServiceProvider);
 
 		var result = await controller.Update(
-			0, new UpdateCategoryRequest("Updated", null), CancellationToken.None);
+			Guid.Empty, new UpdateCategoryRequest("Updated", null), CancellationToken.None);
 
 		Assert.IsInstanceOfType(result, typeof(ObjectResult));
 		var response = (ObjectResult)result;
@@ -117,7 +117,7 @@ public sealed class UpdateCategoryHandlerTests
 	{
 		await using var context = CreateContext();
 		var parentCategory = await AddCategory(context);
-		var category = await AddCategory(context, parentId: parentCategory.Id);
+		var category = await AddCategory(context, OrganizationId, parentId: parentCategory.Id);
 		var createdAt = category.CreatedAt;
 		var beforeUpdate = DateTime.UtcNow;
 		var handler = CreateHandler(context);
@@ -196,10 +196,10 @@ public sealed class UpdateCategoryHandlerTests
 	public async Task Handle_WhenOrganizationIsMissing_ReturnsOrganizationNotFound()
 	{
 		await using var context = CreateContext();
-		CurrentOrganization.OrganizationId.Returns((int?)null);
+		CurrentOrganization.OrganizationId.Returns((Guid?)null);
 		var handler = CreateHandler(context);
 
-		var result = await handler.Handle(new(1, "Updated", null), CancellationToken.None);
+		var result = await handler.Handle(new(Guid.NewGuid(), "Updated", null), CancellationToken.None);
 
 		Assert.IsTrue(result.IsFailure);
 		Assert.AreEqual(CategoryErrors.OrganizationNotFound, result.Error);
@@ -237,7 +237,7 @@ public sealed class UpdateCategoryHandlerTests
 		await using var context = CreateContext();
 		var handler = CreateHandler(context);
 
-		var result = await handler.Handle(new(999, "Updated", null), CancellationToken.None);
+		var result = await handler.Handle(new(Guid.NewGuid(), "Updated", null), CancellationToken.None);
 
 		Assert.IsTrue(result.IsFailure);
 		Assert.AreEqual(CategoryErrors.CategoryNotFound, result.Error);
@@ -251,7 +251,7 @@ public sealed class UpdateCategoryHandlerTests
 	public async Task Handle_WhenCategoryBelongsToAnotherOrganization_ReturnsCategoryNotFound()
 	{
 		await using var context = CreateContext();
-		var category = await AddCategory(context, organizationId: OrganizationId + 1);
+		var category = await AddCategory(context, organizationId: Guid.NewGuid());
 		var handler = CreateHandler(context);
 
 		var result = await handler.Handle(
@@ -328,18 +328,15 @@ public sealed class UpdateCategoryHandlerTests
 	}
 
 	/// <summary>
-	/// Проверяет ошибку валидации при неположительном идентификаторе категории.
+	/// Проверяет ошибку валидации при пустом идентификаторе категории.
 	/// </summary>
-	/// <param name="categoryId"> Некорректный идентификатор категории. </param>
 	[TestMethod]
-	[DataRow(0)]
-	[DataRow(-1)]
-	public async Task Handle_WhenCategoryIdIsNotPositive_ReturnsValidationError(int categoryId)
+	public async Task Handle_WhenCategoryIdIsEmpty_ReturnsValidationError()
 	{
 		await using var context = CreateContext();
 		var handler = CreateHandler(context);
 
-		var result = await handler.Handle(new(categoryId, "Updated", null), CancellationToken.None);
+		var result = await handler.Handle(new(Guid.Empty, "Updated", null), CancellationToken.None);
 
 		Assert.IsTrue(result.IsFailure);
 		Assert.AreEqual("Category.Validation", result.Error.Code);
@@ -359,6 +356,9 @@ public sealed class UpdateCategoryHandlerTests
 		return new ApplicationDbContext(options);
 	}
 
+	private static Task<Category> AddCategory(ApplicationDbContext context)
+		=> AddCategory(context, OrganizationId);
+
 	/// <summary>
 	/// Сохраняет исходную категорию с заполненным аудитом создания.
 	/// </summary>
@@ -368,8 +368,8 @@ public sealed class UpdateCategoryHandlerTests
 	/// <returns> Сохраненную категорию. </returns>
 	private static async Task<Category> AddCategory(
 		ApplicationDbContext context,
-		int? organizationId = OrganizationId,
-		int? parentId = null)
+		Guid? organizationId,
+		Guid? parentId = null)
 	{
 		var category = new Category(
 			"Original", CategoryType.Expense, ActivityType.Operating,

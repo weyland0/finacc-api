@@ -35,7 +35,7 @@ public class UserContextFactory
         LastName = user.LastName
     };
 
-    private async Task<OrganizationContext> GetOrganizationContext(int userId, CancellationToken cancellationToken)
+    private async Task<OrganizationContext> GetOrganizationContext(Guid userId, CancellationToken cancellationToken)
     {
         var membership = await _dbContext.OrganizationMembers
             .Where(x => x.UserId == userId && x.Status == OrganizationMemberStatus.Active)

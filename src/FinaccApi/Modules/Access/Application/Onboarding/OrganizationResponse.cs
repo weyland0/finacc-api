@@ -9,7 +9,7 @@ public class OrganizationResponse
     /// <summary>
     /// Идентификатор организации.
     /// </summary>
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     /// <summary>
     /// Краткое название организации.

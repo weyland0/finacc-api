@@ -29,17 +29,17 @@ public class CurrentOrganization : ICurrentOrganization
     /// <summary>
     /// Идентификатор активной организации текущего пользователя, если контекст найден.
     /// </summary>
-    public int? OrganizationId { get; private set; }
+    public Guid? OrganizationId { get; private set; }
 
     /// <summary>
     /// Идентификатор активного членства пользователя в организации, если контекст найден.
     /// </summary>
-    public int? MembershipId { get; private set; }
+    public Guid? MembershipId { get; private set; }
 
     /// <summary>
     /// Идентификатор роли пользователя в активной организации, если контекст найден.
     /// </summary>
-    public int? RoleId { get; private set; }
+    public Guid? RoleId { get; private set; }
 
     /// <summary>
     /// Коды разрешений, связанных с ролью пользователя в активной организации.
@@ -84,7 +84,7 @@ public class CurrentOrganization : ICurrentOrganization
         if (_organizationContextLoaded)
             return;
 
-        if (!_currentUser.IsAuthenticated || _currentUser.UserId is not int userId)
+        if (!_currentUser.IsAuthenticated || _currentUser.UserId is not Guid userId || userId == Guid.Empty)
         {
             MarkContextAsEmpty();
             return;
